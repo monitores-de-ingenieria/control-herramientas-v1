@@ -381,10 +381,49 @@ function _auditoriaFilasExport() {
   });
 }
 
+// ── AYUDANTES COMPARTIDOS: MEMBRETE Y PIE DE PÁGINA PARA REPORTES PDF ──
+// Reutilizados por Auditoría, Historial e Inventario para que los 3 reportes
+// se vean como parte del mismo sistema (logo, franja de color, paginación),
+// cada uno con su propio color de identidad.
+function _pdfMembrete(doc, titulo, subtitulo, colorRGB) {
+  const [r, g, b] = colorRGB;
+  const ancho = doc.internal.pageSize.getWidth();
+  doc.setFillColor(r, g, b);
+  doc.rect(0, 0, ancho, 26, "F");
+  try { doc.addImage(LOGO_UTESA_BASE64, "PNG", 10, 5, 16, 16); } catch(e) {}
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(15); doc.setFont(undefined, "bold");
+  doc.text(titulo, 30, 13);
+  doc.setFontSize(8.5); doc.setFont(undefined, "normal");
+  doc.text(subtitulo, 30, 20);
+  const fecha = new Date().toLocaleString("es-DO", { dateStyle: "long", timeStyle: "short" });
+  doc.setFontSize(7.5);
+  doc.text(`Generado: ${fecha}`, ancho - 10, 20, { align: "right" });
+  doc.setTextColor(0, 0, 0);
+  return 33; // Y donde debe empezar el contenido/tabla
+}
+
+function _pdfPiePagina(doc, colorRGB) {
+  const [r, g, b] = colorRGB;
+  const ancho = doc.internal.pageSize.getWidth();
+  const alto  = doc.internal.pageSize.getHeight();
+  const pags  = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= pags; i++) {
+    doc.setPage(i);
+    doc.setDrawColor(r, g, b);
+    doc.setLineWidth(0.4);
+    doc.line(10, alto - 11, ancho - 10, alto - 11);
+    doc.setFontSize(7.5); doc.setTextColor(130);
+    doc.text("Control de Herramientas — Taller Mecánica Industrial · UTESA", 10, alto - 6);
+    doc.text(`Página ${i} de ${pags}`, ancho - 10, alto - 6, { align: "right" });
+  }
+}
+
 window.exportarAuditoriaExcel = function() {
   const filas = _auditoriaFilasExport();
   if (!filas.length) { mostrarToast("No hay datos para exportar", "rojo"); return; }
   const ws = XLSX.utils.json_to_sheet(filas);
+  ws["!cols"] = [{ wch: 12 }, { wch: 9 }, { wch: 14 }, { wch: 16 }, { wch: 50 }, { wch: 18 }];
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Auditoría");
   XLSX.writeFile(wb, `auditoria_${new Date().toISOString().slice(0,10)}.xlsx`);
@@ -395,17 +434,21 @@ window.exportarAuditoriaPDF = function() {
   if (!filas.length) { mostrarToast("No hay datos para exportar", "rojo"); return; }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: "landscape" });
-  doc.setFontSize(14);
-  doc.text("Historial de Auditoría — Taller Mecánica Industrial", 14, 14);
-  doc.setFontSize(9);
-  doc.text(`Generado: ${new Date().toLocaleString("es-DO")}`, 14, 20);
+  const COLOR = [79, 70, 229]; // índigo — identidad propia de Auditoría
+  const y0 = _pdfMembrete(doc, "Historial de Auditoría", "Registro de acciones administrativas — Taller Mecánica Industrial", COLOR);
+  doc.setFontSize(8.5); doc.setTextColor(90);
+  doc.text(`Total de acciones registradas: ${filas.length}`, 14, y0 + 2);
+  doc.setTextColor(0);
   doc.autoTable({
-    startY: 26,
+    startY: y0 + 6,
     head: [["Fecha","Hora","Tipo","Acción","Descripción","Usuario"]],
     body: filas.map(f => [f.Fecha, f.Hora, f.Tipo, f.Acción, f.Descripción, f.Usuario]),
     styles: { fontSize: 8 },
-    headStyles: { fillColor: [63,185,80] }
+    headStyles: { fillColor: COLOR, textColor: 255, fontStyle: "bold" },
+    alternateRowStyles: { fillColor: [238, 237, 252] },
+    margin: { left: 14, right: 14, bottom: 16 }
   });
+  _pdfPiePagina(doc, COLOR);
   doc.save(`auditoria_${new Date().toISOString().slice(0,10)}.pdf`);
 };
 let seccionesPermitidas = null;
@@ -4764,17 +4807,15 @@ window.exportarHerramientasPDF = function() {
   if (!lista.length) { mostrarToast("No hay herramientas que exportar", "rojo"); return; }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-  const fecha = new Date().toLocaleDateString("es-DO", { day:"2-digit", month:"long", year:"numeric" });
-  doc.setFillColor(27, 94, 56);
-  doc.rect(0, 0, 210, 28, "F");
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(16); doc.setFont(undefined, "bold");
-  doc.text("Inventario de Herramientas", 14, 12);
-  doc.setFontSize(9); doc.setFont(undefined, "normal");
-  doc.text(`Taller Mecánica Industrial — UTESA    Generado: ${fecha}`, 14, 21);
-  doc.setTextColor(0, 0, 0);
+  const COLOR = [27, 94, 56]; // verde — identidad del taller / inventario
+  const sinStock = lista.filter(h => (h.cantidadDisponible ?? 0) === 0).length;
+  const stockBajo = lista.filter(h => { const c = h.cantidadDisponible ?? 0; return c > 0 && c <= 2; }).length;
+  const y0 = _pdfMembrete(doc, "Inventario de Herramientas", "Taller Mecánica Industrial — UTESA", COLOR);
+  doc.setFontSize(8.5); doc.setTextColor(90);
+  doc.text(`Total: ${lista.length}   ·   Sin stock: ${sinStock}   ·   Stock bajo: ${stockBajo}`, 14, y0 + 2);
+  doc.setTextColor(0);
   doc.autoTable({
-    startY: 34,
+    startY: y0 + 6,
     head: [["#", "Nombre", "Categoría", "Cant.", "Estado"]],
     body: lista.map((h, i) => [
       i + 1,
@@ -4783,11 +4824,11 @@ window.exportarHerramientasPDF = function() {
       h.cantidadDisponible ?? 0,
       (h.cantidadDisponible ?? 0) === 0 ? "Sin stock" : (h.cantidadDisponible ?? 0) <= 2 ? "Stock bajo" : "OK"
     ]),
-    headStyles: { fillColor: [27, 94, 56], textColor: 255, fontStyle: "bold", fontSize: 9 },
+    headStyles: { fillColor: COLOR, textColor: 255, fontStyle: "bold", fontSize: 9 },
     bodyStyles: { fontSize: 8.5 },
     alternateRowStyles: { fillColor: [234, 244, 238] },
     columnStyles: { 0: { halign: "center", cellWidth: 10 }, 3: { halign: "center", cellWidth: 18 }, 4: { halign: "center", cellWidth: 24 } },
-    margin: { left: 14, right: 14 },
+    margin: { left: 14, right: 14, bottom: 16 },
     didParseCell: (data) => {
       if (data.column.index === 4 && data.row.section === "body") {
         const v = data.cell.raw;
@@ -4797,12 +4838,7 @@ window.exportarHerramientasPDF = function() {
       }
     }
   });
-  const pags = doc.internal.getNumberOfPages();
-  for (let i = 1; i <= pags; i++) {
-    doc.setPage(i);
-    doc.setFontSize(8); doc.setTextColor(150);
-    doc.text(`Página ${i} de ${pags}`, 196, 290, { align: "right" });
-  }
+  _pdfPiePagina(doc, COLOR);
   doc.save(`inventario_herramientas_${new Date().toLocaleDateString("es-DO").replace(/\//g,"-")}.pdf`);
   mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Inventario exportado a PDF');
 };
@@ -4908,6 +4944,7 @@ window.exportarHistorialExcel = function() {
   const filas = _histFilasExport();
   if (!filas.length) { mostrarToast("No hay datos para exportar", "rojo"); return; }
   const ws = XLSX.utils.json_to_sheet(filas);
+  ws["!cols"] = [{ wch: 12 }, { wch: 9 }, { wch: 14 }, { wch: 24 }, { wch: 16 }, { wch: 12 }, { wch: 14 }, { wch: 11 }];
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Historial");
   XLSX.writeFile(wb, `historial_${new Date().toISOString().slice(0,10)}.xlsx`);
@@ -4918,17 +4955,28 @@ window.exportarHistorialPDF = function() {
   if (!filas.length) { mostrarToast("No hay datos para exportar", "rojo"); return; }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: "landscape" });
-  doc.setFontSize(14);
-  doc.text("Historial de Movimientos — Taller Mecánica Industrial", 14, 14);
-  doc.setFontSize(9);
-  doc.text(`Generado: ${new Date().toLocaleString("es-DO")}`, 14, 20);
+  const COLOR = [30, 64, 175]; // azul — identidad propia de Historial
+  const conIncidencias = filas.filter(f => f.Incidencia === "Sí").length;
+  const y0 = _pdfMembrete(doc, "Historial de Movimientos", "Taller Mecánica Industrial — UTESA", COLOR);
+  doc.setFontSize(8.5); doc.setTextColor(90);
+  doc.text(`Total de movimientos: ${filas.length}   ·   Con incidencias: ${conIncidencias}`, 14, y0 + 2);
+  doc.setTextColor(0);
   doc.autoTable({
-    startY: 26,
+    startY: y0 + 6,
     head: [["Fecha","Hora","Tipo","Nombre/Profesor","Matrícula/Ref.","N° herr.","Estado","Incidencia"]],
     body: filas.map(f => [f.Fecha, f.Hora, f.Tipo, f["Nombre/Profesor"], f["Matrícula/Ref."], f["N° herramientas"], f.Estado, f.Incidencia]),
     styles: { fontSize: 8 },
-    headStyles: { fillColor: [63,185,80] }
+    headStyles: { fillColor: COLOR, textColor: 255, fontStyle: "bold" },
+    alternateRowStyles: { fillColor: [230, 237, 250] },
+    margin: { left: 14, right: 14, bottom: 16 },
+    didParseCell: (data) => {
+      if (data.column.index === 7 && data.row.section === "body" && data.cell.raw === "Sí") {
+        data.cell.styles.textColor = [217, 48, 37];
+        data.cell.styles.fontStyle = "bold";
+      }
+    }
   });
+  _pdfPiePagina(doc, COLOR);
   doc.save(`historial_${new Date().toISOString().slice(0,10)}.pdf`);
 };
 
