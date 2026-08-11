@@ -3888,7 +3888,7 @@ window.guardarEntradaStock = async function() {
       }
       await addDoc(collection(db, "herramientas"), datosNuevos);
       mostrarToast(`<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> "${nombre}" agregada con ${cantidad} en stock`);
-      registrarAuditoria("stock", "entrada", `Entrada de stock (nueva): +${cantidad} de "${nombre}"${nota ? " — " + nota : ""}`);
+      registrarAuditoria("stock", "entrada", `Entrada de stock de "${nombre}" (nueva): +${cantidad} unidad${cantidad === 1 ? "" : "es"}${nota ? " — " + nota : ""}`);
     } else {
       const id = document.getElementById("entrada-select-herramienta").value;
       if (!id) { mostrarToast("Selecciona una herramienta", "rojo"); btn.disabled = false; btn.textContent = "Registrar entrada"; return; }
@@ -3901,7 +3901,7 @@ window.guardarEntradaStock = async function() {
         await updateDoc(doc(db, "herramientas", id), { cantidadDisponible: nuevaCantidad });
       }
       mostrarToast(`<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Entrada registrada: +${cantidad} ${h.nombre}`);
-      registrarAuditoria("stock", "entrada", `Entrada de stock: +${cantidad} de "${h.nombre}"${nota ? " — " + nota : ""} (quedó en ${nuevaCantidad})`);
+      registrarAuditoria("stock", "entrada", `Entrada de stock de "${h.nombre}": +${cantidad} unidad${cantidad === 1 ? "" : "es"}${nota ? " — " + nota : ""} (quedó en ${nuevaCantidad})`);
     }
     cerrarModalEntradaStock();
   } catch(e) { mostrarToast("Error al registrar la entrada", "rojo"); }
