@@ -3709,15 +3709,15 @@ window.guardarHerramienta = async function() {
   function describirCambios(antes) {
     if (!antes) return "";
     const cambios = [];
-    if (antes.nombre !== nombreFinal) cambios.push(`nombre: "${antes.nombre}" <i data-lucide="chevron-right" style="width:1em;height:1em;vertical-align:-2px"></i> "${nombreFinal}"`);
-    if ((antes.categoria || "Sin categoría") !== (categoria || "Sin categoría")) cambios.push(`categoría: "${antes.categoria || "Sin categoría"}" <i data-lucide="chevron-right" style="width:1em;height:1em;vertical-align:-2px"></i> "${categoria || "Sin categoría"}"`);
+    if (antes.nombre !== nombreFinal) cambios.push(`nombre: "${antes.nombre}" → "${nombreFinal}"`);
+    if ((antes.categoria || "Sin categoría") !== (categoria || "Sin categoría")) cambios.push(`categoría: "${antes.categoria || "Sin categoría"}" → "${categoria || "Sin categoría"}"`);
     const cantidadAntes = Number.isFinite(antes.cantidadDisponible) ? antes.cantidadDisponible : 0;
     if (cantidadAntes !== cantidad) {
       const diferencia = cantidad - cantidadAntes;
       const signo = diferencia > 0 ? "+" : "";
-      cambios.push(`cantidad: ${cantidadAntes} <i data-lucide="chevron-right" style="width:1em;height:1em;vertical-align:-2px"></i> ${cantidad} (${signo}${diferencia})`);
+      cambios.push(`cantidad: ${cantidadAntes} → ${cantidad} (${signo}${diferencia})`);
     }
-    if ((antes.practica || "") !== (practica || "")) cambios.push(`práctica/combo: "${antes.practica || "ninguna"}" <i data-lucide="chevron-right" style="width:1em;height:1em;vertical-align:-2px"></i> "${practica || "ninguna"}"`);
+    if ((antes.practica || "") !== (practica || "")) cambios.push(`práctica/combo: "${antes.practica || "ninguna"}" → "${practica || "ninguna"}"`);
     if (!!antes.usoInterno !== usoInterno) cambios.push(usoInterno ? "marcada como uso interno (oculta para estudiantes)" : "ya no es de uso interno (vuelve a estar visible para estudiantes)");
     if (herIconoLimpiarFlag && antes.icono) cambios.push("quitó el ícono de repuesto roto");
     if ((antes.limitePorEstudiante || null) !== (limitePorEstudiante || null)) cambios.push(`límite por estudiante: ${antes.limitePorEstudiante || 1} → ${limitePorEstudiante || 1}`);
@@ -4154,7 +4154,7 @@ document.getElementById("prof-buscar")?.addEventListener("input", renderProfesor
 
 // ── LABORATORIOS / TALLERES ──
 // Mismo patrón que Profesores. El formulario del estudiante ya lee esta
-// colección en tiempo real (js/inventario.js <i data-lucide="chevron-right" style="width:1em;height:1em;vertical-align:-2px"></i> cargarLaboratorios()), así
+// colección en tiempo real (js/inventario.js → cargarLaboratorios()), así
 // que lo que se agregue/edite/elimine aquí aparece allá sin tocar nada más.
 const LABORATORIOS_RESPALDO_ADMIN = [
   "Taller mecánica básica",
