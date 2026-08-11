@@ -3713,9 +3713,8 @@ window.guardarHerramienta = async function() {
     if ((antes.categoria || "Sin categoría") !== (categoria || "Sin categoría")) cambios.push(`categoría: "${antes.categoria || "Sin categoría"}" → "${categoria || "Sin categoría"}"`);
     const cantidadAntes = Number.isFinite(antes.cantidadDisponible) ? antes.cantidadDisponible : 0;
     if (cantidadAntes !== cantidad) {
-      const diferencia = cantidad - cantidadAntes;
-      const signo = diferencia > 0 ? "+" : "";
-      cambios.push(`cantidad: ${cantidadAntes} → ${cantidad} (${signo}${diferencia})`);
+      const verbo = cantidad > cantidadAntes ? "subió" : "bajó";
+      cambios.push(`cantidad: ${verbo} de ${cantidadAntes} a ${cantidad} unidad${cantidad === 1 ? "" : "es"}`);
     }
     if ((antes.practica || "") !== (practica || "")) cambios.push(`práctica/combo: "${antes.practica || "ninguna"}" → "${practica || "ninguna"}"`);
     if (!!antes.usoInterno !== usoInterno) cambios.push(usoInterno ? "marcada como uso interno (oculta para estudiantes)" : "ya no es de uso interno (vuelve a estar visible para estudiantes)");
