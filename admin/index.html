@@ -1252,6 +1252,39 @@
           <option value="Material Gastable"><i data-lucide=briefcase style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Material Gastable</option>
         </select>
       </div>
+      <div class="modal-campo">
+        <label>Fotografía (opcional)</label>
+        <div id="entrada-drop-zone" style="border:2px dashed var(--borde);border-radius:10px;padding:16px;text-align:center;cursor:pointer;position:relative;transition:border-color .15s,background .15s">
+          <input type="file" id="entrada-input-foto" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+          <div id="entrada-drop-contenido">
+            <div id="entrada-foto-preview-wrap" style="width:70px;height:70px;border-radius:10px;border:1px solid var(--borde);overflow:hidden;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;background:var(--card2);font-size:26px">
+              <span id="entrada-foto-preview-icono"><i data-lucide=wrench style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span>
+              <img id="entrada-foto-preview-img" style="display:none;width:100%;height:100%;object-fit:cover">
+            </div>
+            <div style="font-size:11.5px;color:var(--texto-dim)" id="entrada-drop-texto">Arrastra una imagen aquí o haz clic para seleccionarla</div>
+          </div>
+        </div>
+        <div id="entrada-progreso-wrap" style="display:none;margin-top:8px">
+          <div style="background:var(--card2);border-radius:20px;height:6px;overflow:hidden">
+            <div id="entrada-progreso-barra" style="height:100%;width:0%;background:var(--verde);transition:width .15s"></div>
+          </div>
+          <div id="entrada-progreso-texto" style="font-size:11px;color:var(--texto-dim);margin-top:4px">Subiendo... 0%</div>
+        </div>
+        <div id="entrada-foto-exito" style="display:none;margin-top:6px;font-size:12px;color:var(--verde);font-weight:700"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Foto cargada correctamente</div>
+      </div>
+      <div class="modal-campo">
+        <label>Límite por estudiante, por solicitud</label>
+        <input type="number" id="entrada-input-limite-estudiante" min="1" placeholder="Vacío = 1 (por defecto)"
+          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        <small style="color:var(--texto-dim);font-size:11px">Normalmente un estudiante solo puede marcar 1 unidad de cada herramienta. Sube este número para materiales gastables (electrodos, cinta, etc.)</small>
+      </div>
+      <div class="modal-campo">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="entrada-input-uso-interno" style="width:16px;height:16px;accent-color:var(--verde);cursor:pointer">
+          <span>🔒 Uso interno del taller (no para estudiantes)</span>
+        </label>
+        <small style="color:var(--texto-dim);font-size:11px">Para herramientas propias del taller que solo se prestan a profesores/departamentos. No aparecerá en el formulario público del estudiante.</small>
+      </div>
       <button type="button" class="btn btn-outline" onclick="toggleEntradaNueva(false)" style="width:100%;margin-bottom:14px;font-size:12.5px" title="Cambiar a modo: elegir una herramienta ya existente"><i data-lucide=arrow-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Ya existe, elegir de la lista</button>
     </div>
 

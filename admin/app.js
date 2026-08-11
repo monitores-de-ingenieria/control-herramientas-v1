@@ -3643,11 +3643,50 @@ herDropZone?.addEventListener("drop", e => {
   if (archivo) herProcesarArchivo(archivo);
 });
 
-function herComprimirFoto(archivo) {
+// ---- Mismo manejo de foto, pero para el modal de "Entrada de stock" (herramienta nueva) ----
+let entradaFotoArchivo = null;
+function mostrarPreviewEntrada(url) {
+  const img   = document.getElementById("entrada-foto-preview-img");
+  const icono = document.getElementById("entrada-foto-preview-icono");
+  if (url) { img.src = url; img.style.display = "block"; icono.style.display = "none"; }
+  else { img.style.display = "none"; icono.style.display = "block"; }
+}
+function entradaProcesarArchivo(archivo) {
+  if (!archivo) return;
+  if (!archivo.type.startsWith("image/")) { mostrarToast("Selecciona un archivo de imagen", "rojo"); return; }
+  if (archivo.size > 5 * 1024 * 1024) { mostrarToast("La imagen no debe superar 5 MB", "rojo"); return; }
+  entradaFotoArchivo = archivo;
+  document.getElementById("entrada-foto-exito").style.display = "none";
+  document.getElementById("entrada-drop-texto").textContent = archivo.name;
+  const lector = new FileReader();
+  lector.onload = e => mostrarPreviewEntrada(e.target.result);
+  lector.readAsDataURL(archivo);
+}
+const entradaDropZone = document.getElementById("entrada-drop-zone");
+const entradaInputFoto = document.getElementById("entrada-input-foto");
+entradaInputFoto?.addEventListener("change", () => entradaProcesarArchivo(entradaInputFoto.files[0]));
+entradaDropZone?.addEventListener("dragover", e => { e.preventDefault(); entradaDropZone.style.borderColor = "var(--verde)"; entradaDropZone.style.background = "var(--verde-glow)"; });
+entradaDropZone?.addEventListener("dragleave", () => { entradaDropZone.style.borderColor = "var(--borde)"; entradaDropZone.style.background = ""; });
+entradaDropZone?.addEventListener("drop", e => {
+  e.preventDefault();
+  entradaDropZone.style.borderColor = "var(--borde)"; entradaDropZone.style.background = "";
+  const archivo = e.dataTransfer.files[0];
+  if (archivo) entradaProcesarArchivo(archivo);
+});
+function entradaLimpiarFoto() {
+  entradaFotoArchivo = null;
+  if (entradaInputFoto) entradaInputFoto.value = "";
+  document.getElementById("entrada-drop-texto").textContent = "Arrastra una imagen aquí o haz clic para seleccionarla";
+  document.getElementById("entrada-foto-exito").style.display = "none";
+  document.getElementById("entrada-progreso-wrap").style.display = "none";
+  mostrarPreviewEntrada(null);
+}
+
+function comprimirFoto(archivo, prefijo = "her") {
   return new Promise((resolve, reject) => {
-    const wrap = document.getElementById("her-progreso-wrap");
-    const barra = document.getElementById("her-progreso-barra");
-    const texto = document.getElementById("her-progreso-texto");
+    const wrap = document.getElementById(`${prefijo}-progreso-wrap`);
+    const barra = document.getElementById(`${prefijo}-progreso-barra`);
+    const texto = document.getElementById(`${prefijo}-progreso-texto`);
     wrap.style.display = "block";
     barra.style.width = "10%";
     texto.textContent = "Leyendo imagen...";
@@ -3681,6 +3720,7 @@ function herComprimirFoto(archivo) {
     lector.readAsDataURL(archivo);
   });
 }
+function herComprimirFoto(archivo) { return comprimirFoto(archivo, "her"); }
 
 window.guardarHerramienta = async function() {
   const nombre    = document.getElementById("her-input-nombre").value.trim();
@@ -3801,6 +3841,9 @@ window.abrirModalEntradaStock = function() {
   document.getElementById("entrada-nota").value = "";
   document.getElementById("entrada-nombre-nueva").value = "";
   document.getElementById("entrada-categoria-nueva").value = "";
+  document.getElementById("entrada-input-limite-estudiante").value = "";
+  document.getElementById("entrada-input-uso-interno").checked = false;
+  entradaLimpiarFoto();
   toggleEntradaNueva(false);
   document.getElementById("modal-entrada-stock").classList.add("abierto");
 };
@@ -3813,6 +3856,7 @@ window.toggleEntradaNueva = function(esNueva) {
 
 window.cerrarModalEntradaStock = function() {
   document.getElementById("modal-entrada-stock").classList.remove("abierto");
+  entradaLimpiarFoto();
 };
 
 window.guardarEntradaStock = async function() {
@@ -3827,13 +3871,22 @@ window.guardarEntradaStock = async function() {
     if (esNueva) {
       const nombre = document.getElementById("entrada-nombre-nueva").value.trim();
       const categoria = document.getElementById("entrada-categoria-nueva").value;
+      const limiteEstudianteRaw = document.getElementById("entrada-input-limite-estudiante").value;
+      const limitePorEstudiante = limiteEstudianteRaw ? (parseInt(limiteEstudianteRaw) || 1) : null;
+      const usoInterno = document.getElementById("entrada-input-uso-interno").checked;
       if (!nombre) { mostrarToast("Escribe el nombre", "rojo"); btn.disabled = false; btn.textContent = "Registrar entrada"; return; }
       const yaExiste = (_herListaActual || []).find(h => h.nombre.toLowerCase() === nombre.toLowerCase());
       if (yaExiste) {
         mostrarToast('Ya existe una herramienta con ese nombre — selecciónala de la lista en vez de crear otra', "rojo");
         btn.disabled = false; btn.textContent = "Registrar entrada"; return;
       }
-      await addDoc(collection(db, "herramientas"), { nombre, cantidadDisponible: cantidad, categoria, creadoEn: serverTimestamp() });
+      const datosNuevos = { nombre, cantidadDisponible: cantidad, categoria, usoInterno, limitePorEstudiante, creadoEn: serverTimestamp() };
+      if (entradaFotoArchivo) {
+        btn.textContent = "Procesando foto...";
+        datosNuevos.fotoUrl = await comprimirFoto(entradaFotoArchivo, "entrada");
+        document.getElementById("entrada-foto-exito").style.display = "block";
+      }
+      await addDoc(collection(db, "herramientas"), datosNuevos);
       mostrarToast(`<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> "${nombre}" agregada con ${cantidad} en stock`);
       registrarAuditoria("stock", "entrada", `Entrada de stock (nueva): +${cantidad} de "${nombre}"${nota ? " — " + nota : ""}`);
     } else {
