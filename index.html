@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solicitud de Herramientas</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0e3d24">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Herramientas">
+<link rel="icon" href="img/icons/icon-192.png">
+<link rel="apple-touch-icon" href="img/icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/estilos.css">
+<style>
+  /* Lightbox para ampliar la foto de una herramienta al tocarla */
+  #grid-herramientas img { cursor: zoom-in; }
+  #lightbox-herramienta {
+    position: fixed; inset: 0;
+    background: rgba(8,20,13,0.88);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000; padding: 24px; cursor: zoom-out;
+    backdrop-filter: blur(2px);
+  }
+  #lightbox-herramienta.oculto { display: none; }
+  #lightbox-herramienta img {
+    max-width: 90vw; max-height: 90vh;
+    border-radius: 14px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  #lightbox-cerrar {
+    position: absolute; top: 16px; right: 20px;
+    background: rgba(255,255,255,0.15);
+    border: none; color: #fff;
+    font-size: 22px; width: 40px; height: 40px;
+    border-radius: 50%; cursor: pointer;
+    transition: background .15s;
+  }
+  #lightbox-cerrar:hover { background: rgba(255,255,255,0.28); }
+</style>
+</head>
+<body>
+
+  <!-- Barra de progreso de 5 pasos (decorativa, no interfiere con app.js) -->
+  <div id="progreso-pasos" aria-hidden="true">
+    <span data-paso="pantalla-bienvenida"></span>
+    <span data-paso="pantalla-taller"></span>
+    <span data-paso="pantalla-formulario"></span>
+    <span data-paso="pantalla-epp"></span>
+    <span data-paso="pantalla-final"></span>
+  </div>
+
+  <!-- ===== PANTALLA 1: BIENVENIDA ===== -->
+  <div id="pantalla-bienvenida" class="pantalla">
+    <div class="bienvenida-card">
+      <div class="bienvenida-logo-area">
+        <img src="img/utesiano.jpg" alt="Utesiano de corazón" class="img-utesiano">
+      </div>
+      <div class="bienvenida-texto">
+        <p class="bienvenida-titulo">¡Bienvenido (a)!</p>
+        <p class="bienvenida-sub">Monitores ingenierías</p>
+        <p class="bienvenida-institución">UTESASEDE</p>
+      </div>
+      <button id="btn-ir-taller" class="btn-bienvenida">Solicitar herramientas</button>
+    </div>
+  </div>
+
+  <!-- ===== PANTALLA 2: TALLER ===== -->
+  <div id="pantalla-taller" class="pantalla oculto">
+    <div class="taller-header">
+      <h1 class="taller-titulo">Taller de máquinas y herramientas</h1>
+      <div class="taller-iconos">⚙️🔧</div>
+    </div>
+    <div class="taller-cuerpo">
+      <div class="separador"></div>
+      <button id="btn-ir-formulario" class="btn-solicitar">Solicitar Herramientas</button>
+      <div class="separador"></div>
+    </div>
+  </div>
+
+  <!-- ===== PANTALLA 3: FORMULARIO ===== -->
+  <div id="pantalla-formulario" class="pantalla oculto">
+    <div class="contenedor">
+
+      <header class="form-encabezado">
+        <div class="form-encabezado-titulos">
+          <h1>Formulario de Solicitud</h1>
+          <p class="form-subtitulo">Taller de máquinas y herramientas</p>
+        </div>
+        <span class="form-encabezado-icono">🔧</span>
+      </header>
+
+      <form id="form-solicitud">
+
+        <div class="tarjeta">
+          <div class="campo" style="margin-bottom:0">
+            <label for="tipo-solicitud">Usted está:</label>
+            <div class="select-wrap con-icono">
+              <span class="icono-input"><i data-lucide="user"></i></span>
+              <select id="tipo-solicitud">
+                <option value="solicitando">Solicitando herramientas</option>
+                <option value="adicional">Agregar herramientas adicionales</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONTENEDOR PARA EL FORMULARIO COMPLETO (se oculta cuando se selecciona "adicional") -->
+        <div id="formulario-completo">
+          <div class="tarjeta">
+            <div class="seccion-header">
+              <span class="seccion-header-icono">👤</span>
+              <h2>Información personal</h2>
+              <button type="button" id="btn-olvidar-datos" class="btn-olvidar-datos" title="Borrar mis datos guardados en este dispositivo">🗑 <span class="txt-olvidar">Olvidar mis datos</span></button>
+            </div>
+            <div class="campos-grid">
+
+          <div class="campo">
+            <label for="nombre">Nombre(s):</label>
+            <div class="input-icono-wrap"><span class="icono-input"><i data-lucide="user"></i></span>
+              <input type="text" id="nombre" required></div>
+          </div>
+
+          <div class="campo">
+            <label for="apellido">Apellido(s):</label>
+            <div class="input-icono-wrap"><span class="icono-input"><i data-lucide="user"></i></span>
+              <input type="text" id="apellido" required></div>
+          </div>
+
+          <div class="campo">
+            <label for="matricula">Matrícula:</label>
+            <div class="matricula-wrap">
+              <div class="input-icono-wrap"><span class="icono-input"><i data-lucide="id-card"></i></span>
+                <input type="text" id="matricula" placeholder="0-00-0000" required></div>
+              <button type="button" id="btn-camara" class="btn-camara" title="Tomar foto de carnet">📷</button>
+              <button type="button" id="btn-galeria" class="btn-camara" title="Subir foto desde galería">📁</button>
+            </div>
+            <small>Haga clic en el icono de la cámara para tomar una foto, o en la carpeta para subir una que ya tengas.</small>
+            <input type="file" id="input-camara" accept="image/*" capture="environment" style="display:none">
+            <input type="file" id="input-galeria" accept="image/*" style="display:none">
+            <div id="foto-preview-wrap" class="foto-preview-wrap oculto">
+              <img id="foto-preview" src="" alt="Foto del carnet">
+              <button type="button" id="btn-quitar-foto" class="btn-quitar-foto">✕ Quitar foto</button>
+            </div>
+          </div>
+
+          <div class="campo">
+            <label for="ciclo">Ciclo:</label>
+            <div class="select-wrap con-icono">
+              <span class="icono-input"><i data-lucide="calendar"></i></span>
+              <select id="ciclo" required>
+                <option value="" data-fijo>Elige un ciclo</option>
+                <!-- Los ciclos ahora los agrega solo el staff desde el admin -->
+              </select>
+            </div>
+          </div>
+
+          <div class="campo">
+            <label for="telefono">Número de teléfono:</label>
+            <div class="input-icono-wrap"><span class="icono-input"><i data-lucide="phone"></i></span>
+              <input type="tel" id="telefono" placeholder="809-000-0000" required></div>
+          </div>
+
+          <div class="campo">
+            <label for="profesor">Profesor:</label>
+            <div class="select-wrap con-icono">
+              <span class="icono-input"><i data-lucide="graduation-cap"></i></span>
+              <select id="profesor" required>
+                <option value="">Elige un profesor</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="campo campo-full">
+            <label for="laboratorio">Laboratorio / Taller:</label>
+            <div class="select-wrap con-icono">
+              <span class="icono-input"><i data-lucide="building-2"></i></span>
+              <select id="laboratorio" required>
+                <option value="">Elige un laboratorio/taller</option>
+              </select>
+            </div>
+          </div>
+
+            </div>
+          </div>
+
+          <div class="seccion-header seccion-header-plano">
+            <span class="seccion-header-icono">🔧</span>
+            <h2>Herramientas</h2>
+          </div>
+          <div id="grid-herramientas" class="grid-herramientas"></div>
+
+          <button type="button" id="btn-enviar" class="btn-enviar">✈️ Enviar Solicitud</button>
+        </div>
+
+        <!-- SECCIÓN PARA AGREGAR ADICIONAL (solo matrícula) -->
+        <div id="seccion-adicional" style="display:none;">
+          <div class="campo">
+            <label for="matricula-adicional">Matrícula:</label>
+            <!-- CAMBIADO: eliminado estilo inline, usa clase .campo input -->
+            <input type="text" id="matricula-adicional" placeholder="0-00-0000" class="campo-input">
+          </div>
+          <button type="button" id="btn-buscar-adicional" class="btn-enviar" style="width:100%;">Buscar solicitud activa</button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ===== PASO 4: EPP ===== -->
+  <div id="pantalla-epp" class="pantalla oculto">
+    <div class="contenedor">
+      <div class="tarjeta mensaje mensaje-epp">
+        <h2>⚠️ Recordatorio de Seguridad</h2>
+        <p>Antes de realizar cualquier práctica, asegúrate de utilizar correctamente tus equipos de protección personal (EPP):</p>
+        <ul>
+          <li>✓ Guantes</li>
+          <li>✓ Lentes de seguridad</li>
+        </ul>
+        <p class="resaltado">Tu seguridad es lo más importante.</p>
+        <button id="btn-continuar" class="btn-enviar">Continuar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PASO 5: CONFIRMACIÓN ===== -->
+  <div id="pantalla-final" class="pantalla oculto">
+    <div class="contenedor">
+      <div class="tarjeta mensaje mensaje-final">
+        <h2>✅ Solicitud enviada correctamente</h2>
+        <p id="texto-numero-solicitud" class="numero-solicitud"></p>
+        <p id="texto-despedida"></p>
+        <p>Te deseamos una excelente práctica y un buen resto del día.</p>
+        <button id="btn-nueva-solicitud" class="btn-enviar">Nueva solicitud</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== LIGHTBOX: ampliar foto de herramienta al tocarla ===== -->
+  <div id="lightbox-herramienta" class="oculto">
+    <button id="lightbox-cerrar" type="button" aria-label="Cerrar">✕</button>
+    <img id="lightbox-img" src="" alt="">
+  </div>
+  <script>
+    // Delegación de eventos: funciona con las imágenes que app.js va
+    // agregando dinámicamente dentro de #grid-herramientas, sin importar
+    // cómo las genere.
+    document.getElementById('grid-herramientas')?.addEventListener('click', e => {
+      const img = e.target.closest('img');
+      if (!img) return;
+      const lb = document.getElementById('lightbox-herramienta');
+      document.getElementById('lightbox-img').src = img.src;
+      document.getElementById('lightbox-img').alt = img.alt || '';
+      lb.classList.remove('oculto');
+    });
+    document.getElementById('lightbox-herramienta')?.addEventListener('click', function() {
+      this.classList.add('oculto');
+    });
+  </script>
+
+  <script>
+    // Sincroniza la barra de progreso de 5 pasos con la pantalla visible.
+    // No modifica ni depende de la lógica de app.js: solo observa las
+    // clases "oculto" de los .pantalla existentes.
+    (function () {
+      const orden = ["pantalla-bienvenida","pantalla-taller","pantalla-formulario","pantalla-epp","pantalla-final"];
+      const puntos = document.querySelectorAll('#progreso-pasos span');
+
+      function actualizar() {
+        const activaIdx = orden.findIndex(id => {
+          const el = document.getElementById(id);
+          return el && !el.classList.contains('oculto');
+        });
+        puntos.forEach((p, i) => {
+          p.classList.toggle('hecho', activaIdx > -1 && i < activaIdx);
+          p.classList.toggle('activo', i === activaIdx);
+        });
+        // Sobre fondos oscuros (bienvenida/taller) se ve mejor con contraste claro;
+        // en el formulario y pantallas blancas, con contraste oscuro.
+        const bar = document.getElementById('progreso-pasos');
+        const claras = ["pantalla-formulario","pantalla-epp","pantalla-final"];
+        bar.classList.toggle('tema-claro', orden[activaIdx] && claras.includes(orden[activaIdx]));
+      }
+
+      orden.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        new MutationObserver(actualizar).observe(el, { attributes: true, attributeFilter: ['class'] });
+      });
+      actualizar();
+    })();
+  </script>
+
+  <script>
+    // Registro del service worker (PWA): habilita instalación y caché offline.
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("sw.js").catch((err) => {
+          console.warn("No se pudo registrar el service worker:", err);
+        });
+      });
+    }
+  </script>
+
+  <!-- Firebase SDK -->
+  <script type="module" src="js/firebase.js"></script>
+  <script type="module" src="js/inventario.js"></script>
+  <script type="module" src="js/app.js"></script>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>if (window.lucide) lucide.createIcons();</script>
+</body>
+</html>

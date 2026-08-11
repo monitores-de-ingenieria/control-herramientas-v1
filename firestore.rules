@@ -1,0 +1,274 @@
+rules_version = '2';
+
+// ═══════════════════════════════════════════════════════════════
+// REGLAS DE FIRESTORE — Control de Herramientas
+//
+// Cómo está armada la autenticación en este proyecto:
+// - Los ESTUDIANTES nunca inician sesión (formulario público, sin login).
+// - El ADMIN/ENCARGADO sí inicia sesión con Firebase Auth (email+clave).
+// - El rol de cada persona autenticada vive en el documento
+//   usuarios/{uid} → campo "rol": "administrador" | "encargado", y sus
+//   permisos por área viven en el campo "secciones": ["solicitudes", ...].
+// - ADMIN_RAIZ es el correo de arranque antes de que exista ningún
+//   documento en /usuarios (ajusta si cambia en el código del admin).
+// ═══════════════════════════════════════════════════════════════
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helpers ──
+    function estaAutenticado() {
+      return request.auth != null;
+    }
+
+    function esAdminRaiz() {
+      return estaAutenticado() &&
+        request.auth.token.email.lower() == "utesamonitores@outlook.com";
+    }
+
+    function miDocUsuario() {
+      return get(/databases/$(database)/documents/usuarios/$(request.auth.uid));
+    }
+
+    function esAdministrador() {
+      return estaAutenticado() && (
+        esAdminRaiz() ||
+        (miDocUsuario().data.rol == "administrador")
+      );
+    }
+
+    function esStaff() {
+      return estaAutenticado() && (esAdminRaiz() || exists(/databases/$(database)/documents/usuarios/$(request.auth.uid)));
+    }
+
+    function tieneSeccion(seccion) {
+      return esStaff() && (
+        esAdministrador() ||
+        (miDocUsuario().data.secciones is list && seccion in miDocUsuario().data.secciones)
+      );
+    }
+
+    // Convierte un Timestamp a un entero AAAAMMDD según el día calendario
+    // en Rep. Dom. (UTC-4 fijo, sin horario de verano) — así se puede
+    // comparar "es el mismo día" sin depender de la hora exacta ni de
+    // ventanas rodantes de horas.
+    function diaLocal(ts) {
+      return (ts - duration.value(4, "h")).year() * 10000
+        + (ts - duration.value(4, "h")).month() * 100
+        + (ts - duration.value(4, "h")).day();
+    }
+
+    // Timestamp de referencia de una ficha activaHoy: usa "creadoEn" si
+    // existe, si no "actualizadoEn" (fichas viejas solo traen el segundo).
+    // Si por algún motivo no hay ninguno de los dos, se asume "ahora mismo"
+    // (falla cerrado: la trata como de HOY, o sea, sigue bloqueando).
+    function fechaFicha(datos) {
+      return datos.get("creadoEn", datos.get("actualizadoEn", request.time));
+    }
+
+    // Evita solicitudes duplicadas/spam: una matrícula no puede crear una
+    // solicitud nueva si ya tiene una activa (pendiente o entregada) creada
+    // EL MISMO DÍA CALENDARIO — según /activaHoy. Si ya es otro día, cuenta
+    // como un ciclo nuevo aunque la anterior nunca se marcara "retornada"
+    // (eso queda en el historial).
+    function sinSolicitudActivaHoy(matricula) {
+      let ref = /databases/$(database)/documents/activaHoy/$(matricula);
+      return !exists(ref) ||
+        !(get(ref).data.estado in ["pendiente", "entregada"]) ||
+        diaLocal(fechaFicha(get(ref).data)) != diaLocal(request.time);
+    }
+
+    // Valida un elemento de "herramientas": {nombre, cantidad}. Nada de
+    // objetos con forma libre — así no se puede colar HTML/JS en el nombre
+    // ni una cantidad absurda. (El panel también escapa al mostrar, pero
+    // validar aquí evita que se guarde basura desde el inicio.)
+    function itemHerramientaValido(item) {
+      return item is map &&
+        item.nombre is string &&
+        item.nombre.size() > 0 && item.nombre.size() < 100 &&
+        item.cantidad is number &&
+        item.cantidad > 0 && item.cantidad <= 50;
+    }
+
+    // Sin loops en las reglas de Firestore, así que se desenrolla para las
+    // 20 posiciones posibles (mismo tope que ya se exige en .size() <= 20).
+    // Son llamadas "hermanas" a la misma función, no recursión, así que no
+    // choca con el límite de profundidad de 20 de Firestore.
+    function herramientasValidas(lista) {
+      return
+        (lista.size() < 1 || itemHerramientaValido(lista[0])) &&
+        (lista.size() < 2 || itemHerramientaValido(lista[1])) &&
+        (lista.size() < 3 || itemHerramientaValido(lista[2])) &&
+        (lista.size() < 4 || itemHerramientaValido(lista[3])) &&
+        (lista.size() < 5 || itemHerramientaValido(lista[4])) &&
+        (lista.size() < 6 || itemHerramientaValido(lista[5])) &&
+        (lista.size() < 7 || itemHerramientaValido(lista[6])) &&
+        (lista.size() < 8 || itemHerramientaValido(lista[7])) &&
+        (lista.size() < 9 || itemHerramientaValido(lista[8])) &&
+        (lista.size() < 10 || itemHerramientaValido(lista[9])) &&
+        (lista.size() < 11 || itemHerramientaValido(lista[10])) &&
+        (lista.size() < 12 || itemHerramientaValido(lista[11])) &&
+        (lista.size() < 13 || itemHerramientaValido(lista[12])) &&
+        (lista.size() < 14 || itemHerramientaValido(lista[13])) &&
+        (lista.size() < 15 || itemHerramientaValido(lista[14])) &&
+        (lista.size() < 16 || itemHerramientaValido(lista[15])) &&
+        (lista.size() < 17 || itemHerramientaValido(lista[16])) &&
+        (lista.size() < 18 || itemHerramientaValido(lista[17])) &&
+        (lista.size() < 19 || itemHerramientaValido(lista[18])) &&
+        (lista.size() < 20 || itemHerramientaValido(lista[19]));
+    }
+
+    // ── solicitudes ── (formulario público de estudiantes)
+    match /solicitudes/{id} {
+      allow create: if
+        request.resource.data.keys().hasOnly([
+          "nombre", "apellido", "matricula", "ciclo", "telefono",
+          "profesor", "laboratorio", "herramientas", "estado",
+          "creadoEn", "numeroSolicitud", "token"
+        ]) &&
+        request.resource.data.nombre is string &&
+        request.resource.data.nombre.size() > 0 && request.resource.data.nombre.size() < 80 &&
+        request.resource.data.apellido is string &&
+        request.resource.data.apellido.size() > 0 && request.resource.data.apellido.size() < 80 &&
+        request.resource.data.matricula is string &&
+        request.resource.data.matricula.matches('^[0-9]-[0-9]{2}-[0-9]{4}$') &&
+        request.resource.data.telefono is string &&
+        request.resource.data.telefono.size() > 0 && request.resource.data.telefono.size() < 20 &&
+        request.resource.data.profesor is string &&
+        request.resource.data.profesor.size() > 0 && request.resource.data.profesor.size() < 100 &&
+        request.resource.data.laboratorio is string &&
+        request.resource.data.laboratorio.size() > 0 && request.resource.data.laboratorio.size() < 100 &&
+        (!("token" in request.resource.data) || (request.resource.data.token is string && request.resource.data.token.size() >= 16)) &&
+        request.resource.data.estado == "pendiente" &&
+        request.resource.data.herramientas is list &&
+        request.resource.data.herramientas.size() > 0 && request.resource.data.herramientas.size() <= 20 &&
+        herramientasValidas(request.resource.data.herramientas) &&
+        sinSolicitudActivaHoy(request.resource.data.matricula);
+
+      // Lectura: SOLO el staff con la sección "solicitudes" puede leer los
+      // datos completos (nombre, teléfono, matrícula) de las solicitudes.
+      allow read: if tieneSeccion("solicitudes");
+
+      allow update: if tieneSeccion("solicitudes") || (
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["herramientas", "herramientasEntregadas", "tokenUsado"]) &&
+        resource.data.estado in ["pendiente", "entregada"] &&
+        request.resource.data.herramientas is list &&
+        request.resource.data.herramientas.size() > 0 && request.resource.data.herramientas.size() <= 20 &&
+        herramientasValidas(request.resource.data.herramientas) &&
+        // Solo puede AGREGAR: el arreglo nuevo debe seguir conteniendo todo
+        // lo que ya estaba, para que no se pueda borrar ni reemplazar lo
+        // que el estudiante (o el staff) ya había registrado.
+        request.resource.data.herramientas.hasAll(resource.data.herramientas) &&
+        (!("herramientasEntregadas" in request.resource.data) ||
+          (request.resource.data.herramientasEntregadas is list &&
+           request.resource.data.herramientasEntregadas.size() <= 20 &&
+           herramientasValidas(request.resource.data.herramientasEntregadas) &&
+           (!("herramientasEntregadas" in resource.data) ||
+             request.resource.data.herramientasEntregadas.hasAll(resource.data.herramientasEntregadas)))) &&
+        request.resource.data.tokenUsado is string &&
+        request.resource.data.tokenUsado == resource.data.token
+      );
+
+      allow delete: if esAdministrador();
+    }
+
+    match /herramientas/{id} {
+      allow read: if true;
+      allow create, update: if (tieneSeccion("herramientas-cfg") || tieneSeccion("inv-herramientas"))
+        && request.resource.data.nombre is string
+        && request.resource.data.nombre.size() > 0 && request.resource.data.nombre.size() < 120;
+      allow delete: if tieneSeccion("herramientas-cfg") || tieneSeccion("inv-herramientas");
+    }
+    match /profesores/{id} {
+      allow read: if true;
+      allow write: if tieneSeccion("profesores-cfg")
+        && request.resource.data.nombre is string
+        && request.resource.data.nombre.size() > 0 && request.resource.data.nombre.size() < 120;
+    }
+    match /laboratorios/{id} {
+      allow read: if true;
+      allow write: if tieneSeccion("laboratorios")
+        && request.resource.data.nombre is string
+        && request.resource.data.nombre.size() > 0 && request.resource.data.nombre.size() < 120;
+    }
+    match /ciclos/{id} {
+      allow read: if true;
+      allow create: if tieneSeccion("ciclos-cfg")
+        && request.resource.data.nombre is string
+        && request.resource.data.nombre.matches('^[0-9]{1,2}-[0-9]{4}$');
+      allow update: if tieneSeccion("ciclos-cfg")
+        && request.resource.data.nombre is string
+        && request.resource.data.nombre.matches('^[0-9]{1,2}-[0-9]{4}$');
+      allow delete: if tieneSeccion("ciclos-cfg");
+    }
+
+    match /materias/{id} {
+      allow read: if true;
+      allow write: if tieneSeccion("materias-cfg")
+        && request.resource.data.nombre is string
+        && request.resource.data.nombre.size() > 0 && request.resource.data.nombre.size() < 120;
+    }
+
+    match /activaHoy/{matricula} {
+      allow read: if true;
+      // Nota: aquí NO se exige token — el cliente ya no lo manda en esta
+      // colección (vive solo en el documento de "solicitudes", que sí lo
+      // valida). activaHoy es solo una ficha de conveniencia sin datos
+      // personales (nombre/teléfono/matrícula real no están aquí), así que
+      // el riesgo de dejarla sin verificación de dueño es bajo.
+      allow create: if tieneSeccion("solicitudes") || (
+        request.resource.data.keys().hasOnly(["estado", "herramientas", "numeroSolicitud", "actualizadoEn", "creadoEn"]) &&
+        request.resource.data.estado in ["pendiente", "entregada"] &&
+        request.resource.data.herramientas is list &&
+        request.resource.data.herramientas.size() <= 20 &&
+        herramientasValidas(request.resource.data.herramientas)
+      );
+      allow update: if tieneSeccion("solicitudes") || (
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["estado", "herramientas", "numeroSolicitud", "actualizadoEn", "creadoEn"]) &&
+        request.resource.data.estado in ["pendiente", "entregada"] &&
+        request.resource.data.herramientas is list &&
+        request.resource.data.herramientas.size() <= 20 &&
+        herramientasValidas(request.resource.data.herramientas)
+      );
+    }
+
+    match /incidencias/{id} {
+      allow create: if tieneSeccion("solicitudes") || tieneSeccion("prestamos-prof") || tieneSeccion("prestadas");
+      allow read: if esAdministrador() || tieneSeccion("incidencias")
+        || tieneSeccion("solicitudes") || tieneSeccion("prestamos-prof") || tieneSeccion("prestadas");
+    }
+
+    match /contadores/{anio} {
+      allow read: if true;
+      allow create: if request.resource.data.ultimo == 1;
+      allow update: if esStaff() || request.resource.data.ultimo == resource.data.ultimo + 1;
+    }
+
+    match /prestamos_profesores/{id} {
+      allow read, write: if tieneSeccion("prestamos-prof");
+    }
+    match /prestamos_externos/{id} {
+      allow read, write: if tieneSeccion("prestadas");
+    }
+
+    match /historial/{id} {
+      allow read, write: if esAdministrador()
+        || tieneSeccion("prestamos-prof") || tieneSeccion("prestadas") || tieneSeccion("solicitudes");
+    }
+
+    match /auditoria/{id} {
+      allow create: if esStaff();
+      allow read: if esAdministrador() || tieneSeccion("auditoria-cfg");
+    }
+
+    match /usuarios/{uid} {
+      allow read: if estaAutenticado() && (request.auth.uid == uid || esAdministrador());
+      allow create, delete: if esAdministrador();
+      allow update: if esAdministrador() ||
+        (estaAutenticado() && request.auth.uid == uid &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(["debeCambiarContrasena"]));
+    }
+
+    // Cualquier otra colección no listada arriba: bloqueada por defecto.
+  }
+}

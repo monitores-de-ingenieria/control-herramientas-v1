@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Admin — Control de Herramientas</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#161b22">
+<link rel="icon" href="../img/icons/icon-192.png">
+<link rel="apple-touch-icon" href="../img/icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilos.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+
+<div id="pantalla-carga"><div class="spinner"></div>Cargando...</div>
+<div id="pantalla-login">
+  <div class="login-box">
+    <div class="login-logo"></div>
+    <h1>Control de Herramientas</h1>
+    <p>Taller Mecánica Industrial — Panel Administrativo</p>
+
+    <div class="login-campo">
+      <label>Correo electrónico</label>
+      <input type="email" id="login-email" placeholder="admin@taller.com" autocomplete="off">
+    </div>
+    <div class="login-campo">
+      <label>Contraseña</label>
+      <input type="password" id="login-pass" placeholder="••••••••" autocomplete="new-password">
+    </div>
+    <button class="btn-login" id="btn-login">Iniciar sesión</button>
+    <div class="login-error" id="login-error">Correo o contraseña incorrectos.</div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="shell">
+
+    <div class="topbar">
+      <button class="btn-toggle-sidebar" id="btn-toggle-sidebar" title="Colapsar menú"><i data-lucide=menu style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
+      <div>
+        <div class="topbar-titulo">Control de Herramientas</div>
+        <div class="topbar-sub">Taller Mecánica Industrial</div>
+      </div>
+      <div class="topbar-spacer"></div>
+      <button class="switch-tema" id="btn-tema" onclick="toggleTema()" role="switch" aria-checked="false" aria-label="Cambiar entre tema claro y oscuro" title="Cambiar tema">
+        <i data-lucide=sun class="switch-tema-icono switch-tema-icono-sol" style="width:13px;height:13px"></i>
+        <i data-lucide=moon class="switch-tema-icono switch-tema-icono-luna" style="width:13px;height:13px"></i>
+        <span class="switch-tema-perilla"></span>
+      </button>
+      <div class="topbar-admin">
+        <div class="avatar" id="admin-avatar">A</div>
+        <div>
+          <div style="font-size:13px;font-weight:600" id="topbar-admin-nombre">Administrador</div>
+          <div style="font-size:11px;color:var(--topbar-sub)" id="topbar-admin-rol">Encargado del Taller</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <div class="sb-brand">
+        <div class="sb-brand-icon"></div>
+        <div>
+          <div class="sb-brand-title">Taller</div>
+          <div class="sb-brand-sub">Mecánica Industrial</div>
+        </div>
+      </div>
+
+      <div class="sb-stat-prestadas" title="Herramientas prestadas hoy en el taller">
+        <svg class="sb-gabinete" viewBox="0 0 120 150" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="18" y="8" width="70" height="10" rx="3" fill="#16a34a"/>
+          <rect x="14" y="16" width="78" height="112" rx="6" fill="#22c55e"/>
+          <rect x="14" y="16" width="78" height="112" rx="6" fill="none" stroke="#166534" stroke-width="2"/>
+          <g fill="#bbf7d0" opacity=".85">
+            <rect x="22" y="24" width="62" height="7" rx="3"/>
+            <rect x="22" y="35" width="62" height="7" rx="3"/>
+            <rect x="22" y="46" width="62" height="7" rx="3"/>
+          </g>
+          <rect x="20" y="58" width="66" height="34" rx="3" fill="#14532d"/>
+          <g stroke="#d8d8d8" stroke-width="2.4" stroke-linecap="round">
+            <line x1="27" y1="65" x2="27" y2="86"/>
+            <line x1="33" y1="65" x2="33" y2="86"/>
+            <line x1="39" y1="68" x2="39" y2="83"/>
+            <line x1="45" y1="68" x2="45" y2="83"/>
+          </g>
+          <g stroke="#e8e8e8" stroke-width="2.6" stroke-linecap="round">
+            <line x1="55" y1="64" x2="52" y2="88"/>
+            <line x1="61" y1="64" x2="58" y2="88"/>
+          </g>
+          <path d="M67 66 l10 10 M67 76 l10 -10" stroke="#ddd" stroke-width="3" stroke-linecap="round"/>
+          <rect x="76" y="62" width="4" height="20" rx="2" fill="#8a5a2b"/>
+          <circle cx="78" cy="61" r="4" fill="#b0b0b0"/>
+          <rect x="20" y="95" width="31" height="30" rx="3" fill="#16a34a"/>
+          <rect x="53" y="95" width="31" height="30" rx="3" fill="#16a34a"/>
+          <rect x="33" y="106" width="5" height="9" rx="1.5" fill="#ddd"/>
+          <rect x="66" y="106" width="5" height="9" rx="1.5" fill="#ddd"/>
+          <circle cx="30" cy="140" r="7" fill="#222"/>
+          <circle cx="76" cy="140" r="7" fill="#222"/>
+          <circle cx="30" cy="140" r="2.5" fill="#555"/>
+          <circle cx="76" cy="140" r="2.5" fill="#555"/>
+        </svg>
+        <div class="sb-stat-prestadas-top">
+          <span class="sb-stat-prestadas-label">Herramientas Prestadas<br><span class="hoy">HOY</span></span>
+        </div>
+        <div class="sb-stat-prestadas-numero" id="tab-total-herramientas-hoy">—</div>
+      </div>
+
+      <div class="nav-item" data-vista="dashboard" title="Dashboard"><span class="nav-icono"><i data-lucide="layout-dashboard"></i></span><span class="nav-texto">Dashboard</span></div>
+
+      <div class="nav-item activo" data-vista="solicitudes" title="Solicitudes"><span class="nav-icono"><i data-lucide="clipboard-list"></i></span><span class="nav-texto">Solicitudes</span><span class="nav-badge" id="badge-pendientes">0</span></div>
+      <div class="nav-item" data-vista="prestamos-prof" title="Préstamos Profesores"><span class="nav-icono"><i data-lucide="user-round"></i></span><span class="nav-texto">Préstamos Profesores</span><span class="nav-badge" id="badge-prestamos-prof" style="display:none">0</span></div>
+      <div class="nav-item" data-vista="prestadas" title="Herramientas Prestadas"><span class="nav-icono"><i data-lucide="arrow-left-right"></i></span><span class="nav-texto">Herramientas Prestadas</span><span class="nav-badge" id="badge-prestadas" style="display:none">0</span></div>
+
+      <div class="nav-grupo">Inventario</div>
+      <div class="nav-item" data-vista="herramientas-cfg" title="Herramientas"><span class="nav-icono"><i data-lucide="wrench"></i></span><span class="nav-texto">Herramientas</span></div>
+
+      <div class="nav-grupo">Reportes</div>
+      <div class="nav-item" data-vista="historial" title="Historial"><span class="nav-icono"><i data-lucide="chart-bar-big"></i></span><span class="nav-texto">Historial</span></div>
+      <div class="nav-item" data-vista="auditoria-cfg" id="nav-auditoria" title="Auditoría"><span class="nav-icono"><i data-lucide="shield-check"></i></span><span class="nav-texto">Auditoría</span></div>
+
+      <div class="nav-grupo">Configuración</div>
+      <div class="nav-item" data-vista="profesores-cfg" title="Profesores"><span class="nav-icono"><i data-lucide="user-round"></i></span><span class="nav-texto">Profesores</span></div>
+      <div class="nav-item" data-vista="laboratorios" title="Laboratorios / Talleres"><span class="nav-icono"><i data-lucide="building-2"></i></span><span class="nav-texto">Laboratorios / Talleres</span></div>
+      <div class="nav-item" data-vista="ciclos-cfg" title="Ciclos"><span class="nav-icono"><i data-lucide="calendar-days"></i></span><span class="nav-texto">Ciclos</span></div>
+      <div class="nav-item" data-vista="usuarios-cfg" id="nav-usuarios" title="Usuarios"><span class="nav-icono"><i data-lucide="users-round"></i></span><span class="nav-texto">Usuarios</span></div>
+
+      
+
+      <div class="sb-spacer"></div>
+      <div class="nav-item nav-cerrar" id="btn-cerrar-sesion" title="Cerrar Sesión"><span class="nav-icono"><i data-lucide="log-out"></i></span><span class="nav-texto">Cerrar Sesión</span></div>
+
+
+    </div>
+
+    <div class="contenido">
+
+      <div class="vista" id="vista-dashboard">
+
+        <div class="dash-bienvenida">
+          <div>
+            <h2 id="saludo-admin">¡Bienvenido, Administrador!</h2>
+            <p>Resumen del sistema · Todo está bajo control</p>
+          </div>
+          <div class="dash-fecha">
+            <span><i data-lucide=calendar style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> <span id="dash-fecha-txt"></span></span>
+            <span><i data-lucide=clock style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> <span id="dash-hora-txt"></span></span>
+          </div>
+        </div>
+
+        <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))" id="dash-kpis">
+          <div class="kpi-card" data-vista="solicitudes" data-estado="pendiente" title="Ver solicitudes pendientes de hoy">
+            <div class="kpi-icono"><i data-lucide="clipboard-list"></i></div>
+            <div><div class="kpi-label">Pendientes hoy</div><div class="kpi-numero" id="res-pendientes"><span class="skel skel-num" aria-hidden="true"></span></div><div class="kpi-sub" id="res-pendientes-trend"></div></div>
+          </div>
+          <div class="kpi-card" data-vista="solicitudes" data-estado="entregada" title="Ver solicitudes entregadas hoy">
+            <div class="kpi-icono"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></div>
+            <div><div class="kpi-label">Entregadas hoy</div><div class="kpi-numero" id="res-prestadas"><span class="skel skel-num" aria-hidden="true"></span></div><div class="kpi-sub" id="res-prestadas-trend"></div></div>
+          </div>
+          <div class="kpi-card" data-vista="solicitudes" data-estado="retornada" title="Ver solicitudes retornadas hoy">
+            <div class="kpi-icono"><i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></div>
+            <div><div class="kpi-label">Retornadas hoy</div><div class="kpi-numero" id="res-hoy"><span class="skel skel-num" aria-hidden="true"></span></div><div class="kpi-sub" id="res-hoy-trend"></div></div>
+          </div>
+          <div class="kpi-card" data-vista="solicitudes" data-estado="entregada" title="Herramientas actualmente prestadas y sin retornar">
+            <div class="kpi-icono"><i data-lucide="toolbox"></i></div>
+            <div><div class="kpi-label">Herramientas afuera</div><div class="kpi-numero" id="res-afuera"><span class="skel skel-num" aria-hidden="true"></span></div></div>
+          </div>
+          <div class="kpi-card" data-vista="prestamos-prof" title="Ver profesores con préstamos activos">
+            <div class="kpi-icono"><i data-lucide="graduation-cap"></i></div>
+            <div><div class="kpi-label">Profesores c/préstamo</div><div class="kpi-numero" id="res-prof-activos"><span class="skel skel-num" aria-hidden="true"></span></div></div>
+          </div>
+          <div class="kpi-card rojo" id="dash-kpi-incidencias" onclick="verIncidencias()" title="Ver incidencias abiertas">
+            <div class="kpi-icono"><i data-lucide="triangle-alert"></i></div>
+            <div><div class="kpi-label">Incidencias abiertas</div><div class="kpi-numero" id="dash-incidencias"><span class="skel skel-num" aria-hidden="true"></span></div></div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:12px">
+
+          <div class="dash-panel">
+            <div class="dash-panel-header"><h3><i data-lucide=pie-chart style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Solicitudes de hoy</h3><span style="font-size:10px;color:var(--texto-dim)">clic en un estado</span></div>
+            <div id="grafico-estado-hoy" style="padding:14px"><div class="skel-donut-wrap" aria-hidden="true">
+              <span class="skel skel-circle" style="width:96px;height:96px"></span>
+              <span class="skel-donut-textos">
+                <span class="skel skel-line" style="width:85%"></span>
+                <span class="skel skel-line" style="width:60%"></span>
+                <span class="skel skel-line" style="width:70%"></span>
+                <span class="skel skel-line" style="width:45%"></span>
+              </span>
+            </div></div>
+          </div>
+
+          <div class="dash-panel">
+            <div class="dash-panel-header"><h3><i data-lucide=tag style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Categorías más usadas</h3><span style="font-size:10px;color:var(--texto-dim)">clic para filtrar</span></div>
+            <div id="grafico-categorias" style="padding:14px"><div class="skel-donut-wrap" aria-hidden="true">
+              <span class="skel skel-circle" style="width:96px;height:96px"></span>
+              <span class="skel-donut-textos">
+                <span class="skel skel-line" style="width:75%"></span>
+                <span class="skel skel-line" style="width:55%"></span>
+                <span class="skel skel-line" style="width:65%"></span>
+                <span class="skel skel-line" style="width:40%"></span>
+              </span>
+            </div></div>
+          </div>
+
+          <div class="dash-panel">
+            <div class="dash-panel-header"><h3><i data-lucide=target style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Tasa de incidencias</h3><span style="font-size:10px;color:var(--texto-dim)">clic para ver</span></div>
+            <div id="grafico-gauge-incidencias" style="padding:14px;cursor:pointer" onclick="verIncidencias()" title="Ver incidencias abiertas"><div class="skel-donut-wrap" aria-hidden="true">
+              <span class="skel skel-circle" style="width:96px;height:96px"></span>
+              <span class="skel-donut-textos">
+                <span class="skel skel-line" style="width:65%"></span>
+                <span class="skel skel-line" style="width:40%"></span>
+              </span>
+            </div></div>
+          </div>
+
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1.4fr));gap:12px;margin-bottom:12px">
+
+          <div class="dash-panel">
+            <div class="dash-panel-header"><h3><i data-lucide=trending-up style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Tendencia — últimos 7 días</h3><span style="font-size:10px;color:var(--texto-dim)">clic en un día</span></div>
+            <div id="grafico-semana" style="padding:14px"><div class="skel-barras-wrap" aria-hidden="true">
+              <span class="skel skel-bar" style="height:45%"></span>
+              <span class="skel skel-bar" style="height:65%"></span>
+              <span class="skel skel-bar" style="height:38%"></span>
+              <span class="skel skel-bar" style="height:80%"></span>
+              <span class="skel skel-bar" style="height:55%"></span>
+              <span class="skel skel-bar" style="height:70%"></span>
+              <span class="skel skel-bar" style="height:50%"></span>
+            </div></div>
+          </div>
+
+          <div class="dash-panel">
+            <div class="dash-panel-header"><h3>Herramientas más solicitadas</h3><span style="font-size:10px;color:var(--texto-dim)">clic para abrir</span></div>
+            <div id="grafico-herramientas" style="padding:14px"><div class="skel-barras-wrap" aria-hidden="true">
+              <span class="skel skel-bar" style="height:75%"></span>
+              <span class="skel skel-bar" style="height:55%"></span>
+              <span class="skel skel-bar" style="height:90%"></span>
+              <span class="skel skel-bar" style="height:40%"></span>
+              <span class="skel skel-bar" style="height:60%"></span>
+            </div></div>
+          </div>
+
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:12px">
+
+          <div class="dash-panel">
+            <div class="dash-panel-header"><h3>Stock bajo</h3><span style="font-size:10px;color:var(--texto-dim)">clic para gestionar</span></div>
+            <div id="dash-stock-bajo" style="padding:12px"><div class="skel-lista" aria-hidden="true">
+              <div class="skel-fila"><span class="skel skel-circle" style="width:34px;height:34px"></span><span class="skel-fila-textos"><span class="skel skel-line" style="width:55%"></span><span class="skel skel-line" style="width:30%;height:8px"></span></span></div>
+              <div class="skel-fila"><span class="skel skel-circle" style="width:34px;height:34px"></span><span class="skel-fila-textos"><span class="skel skel-line" style="width:65%"></span><span class="skel skel-line" style="width:35%;height:8px"></span></span></div>
+              <div class="skel-fila"><span class="skel skel-circle" style="width:34px;height:34px"></span><span class="skel-fila-textos"><span class="skel skel-line" style="width:45%"></span><span class="skel skel-line" style="width:25%;height:8px"></span></span></div>
+            </div></div>
+          </div>
+
+          <div class="dash-panel">
+            <div class="dash-panel-header"><h3><i data-lucide=clock style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Actividad reciente</h3><span style="font-size:10px;color:var(--texto-dim)">últimos movimientos</span></div>
+            <div id="dash-actividad" style="padding:12px"><div class="skel-lista" aria-hidden="true">
+              <div class="skel-fila"><span class="skel skel-circle" style="width:30px;height:30px"></span><span class="skel-fila-textos"><span class="skel skel-line" style="width:70%"></span></span><span class="skel skel-line" style="width:36px;height:8px"></span></div>
+              <div class="skel-fila"><span class="skel skel-circle" style="width:30px;height:30px"></span><span class="skel-fila-textos"><span class="skel skel-line" style="width:55%"></span></span><span class="skel skel-line" style="width:36px;height:8px"></span></div>
+              <div class="skel-fila"><span class="skel skel-circle" style="width:30px;height:30px"></span><span class="skel-fila-textos"><span class="skel skel-line" style="width:60%"></span></span><span class="skel skel-line" style="width:36px;height:8px"></span></div>
+            </div></div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="vista activa" id="vista-solicitudes">
+        <div class="pagina-titulo">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="pagina-icono pagina-icono-solicitudes"><i data-lucide=clipboard-list></i></div>
+            <div>
+              <h2>Solicitudes</h2>
+              <p>Gestiona las solicitudes de herramientas y materiales</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="seccion-tabla">
+          <div class="toolbar-tabla">
+            <div class="filtros">
+              <div class="buscar-wrap" style="flex:1;min-width:200px">
+                <input type="text" id="filtro-buscar" placeholder="Buscar por nombre, matrícula o profesor..."
+                  style="width:100%">
+                <span class="buscar-icono"><i data-lucide=search></i></span>
+              </div>
+              <select id="filtro-estado" style="min-width:150px;flex-shrink:0">
+                <option value="">Estado: Todos</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="entregada">Entregada</option>
+                <option value="retornada">Retornada</option>
+                <option value="cancelada">Cancelada</option>
+                <option value="incidencia">Con Incidencia</option>
+              </select>
+              <select id="filtro-profesor" style="min-width:150px;flex-shrink:0">
+                <option value="">Profesor: Todos</option>
+              </select>
+              <label class="chip-toggle" title="Cuando está activo, las solicitudes ya retornadas no aparecen en la tabla (salvo que filtres el estado por 'Retornada')">
+                <input type="checkbox" id="chk-ocultar-retornadas" checked onchange="filtroOcultarRetornadasCambio()">
+                <i data-lucide=eye-off style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Ocultar retornadas
+              </label>
+            </div>
+
+            <div id="filtros-activos-bar" style="display:none;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px">
+              <span style="font-size:11px;color:var(--texto-dim);font-weight:600">Filtros activos:</span>
+              <div id="filtros-tags" style="display:flex;gap:6px;flex-wrap:wrap;flex:1"></div>
+              <button id="btn-limpiar-filtros" style="padding:4px 10px;background:rgba(220,38,38,.1);color:var(--rojo);border:1px solid rgba(220,38,38,.25);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Limpiar filtros</button>
+            </div>
+
+            <div class="tabs-segmentado" style="margin-top:14px">
+              <button class="tab-btn tab-seg activo" data-tab-estado="">Todos <span class="tab-badge" id="tab-todos">—</span></button>
+              <button class="tab-btn tab-seg" data-tab-estado="pendiente">Pendientes <span class="tab-badge" id="tab-pend">—</span></button>
+              <button class="tab-btn tab-seg" data-tab-estado="entregada">Entregados <span class="tab-badge" id="tab-ent">—</span></button>
+              <button class="tab-btn tab-seg" data-tab-estado="retornada">Retornadas <span class="tab-badge" id="tab-ret">—</span></button>
+              <button class="tab-btn tab-seg" data-tab-estado="cancelada">Canceladas <span class="tab-badge" id="tab-can">—</span></button>
+            </div>
+          </div>
+
+          <div id="tabla-solicitudes-wrap">
+            <div class="skel-tabla" aria-hidden="true">
+              <div class="skel-tabla-fila"><span class="skel skel-line" style="width:18px"></span><span class="skel skel-line" style="width:64px"></span><span class="skel skel-circle" style="width:28px;height:28px"></span><span class="skel skel-line" style="width:130px"></span><span class="skel skel-line" style="width:90px"></span><span class="skel skel-line" style="width:90px"></span><span class="skel skel-line" style="width:70px"></span><span class="skel skel-line" style="width:64px"></span><span class="skel skel-line" style="width:78px"></span></div>
+              <div class="skel-tabla-fila" style="opacity:.85"><span class="skel skel-line" style="width:18px"></span><span class="skel skel-line" style="width:64px"></span><span class="skel skel-circle" style="width:28px;height:28px"></span><span class="skel skel-line" style="width:110px"></span><span class="skel skel-line" style="width:80px"></span><span class="skel skel-line" style="width:100px"></span><span class="skel skel-line" style="width:70px"></span><span class="skel skel-line" style="width:64px"></span><span class="skel skel-line" style="width:78px"></span></div>
+              <div class="skel-tabla-fila" style="opacity:.7"><span class="skel skel-line" style="width:18px"></span><span class="skel skel-line" style="width:64px"></span><span class="skel skel-circle" style="width:28px;height:28px"></span><span class="skel skel-line" style="width:140px"></span><span class="skel skel-line" style="width:95px"></span><span class="skel skel-line" style="width:85px"></span><span class="skel skel-line" style="width:70px"></span><span class="skel skel-line" style="width:64px"></span><span class="skel skel-line" style="width:78px"></span></div>
+              <div class="skel-tabla-fila" style="opacity:.55"><span class="skel skel-line" style="width:18px"></span><span class="skel skel-line" style="width:64px"></span><span class="skel skel-circle" style="width:28px;height:28px"></span><span class="skel skel-line" style="width:100px"></span><span class="skel skel-line" style="width:90px"></span><span class="skel skel-line" style="width:90px"></span><span class="skel skel-line" style="width:70px"></span><span class="skel skel-line" style="width:64px"></span><span class="skel skel-line" style="width:78px"></span></div>
+              <div class="skel-tabla-fila" style="opacity:.4"><span class="skel skel-line" style="width:18px"></span><span class="skel skel-line" style="width:64px"></span><span class="skel skel-circle" style="width:28px;height:28px"></span><span class="skel skel-line" style="width:120px"></span><span class="skel skel-line" style="width:85px"></span><span class="skel skel-line" style="width:95px"></span><span class="skel skel-line" style="width:70px"></span><span class="skel skel-line" style="width:64px"></span><span class="skel skel-line" style="width:78px"></span></div>
+            </div>
+          </div>
+          <div class="paginacion" id="paginacion-sol">
+            <span id="pag-info"></span>
+            <div class="paginacion-btns" id="pag-btns"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="vista" id="vista-prestamos-prof">
+        <div class="pagina-titulo">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="pagina-icono pagina-icono-prestamos-prof"><i data-lucide=graduation-cap></i></div>
+            <div>
+              <h2>Préstamos a Profesores</h2>
+              <p>Registro directo de herramientas entregadas a profesores</p>
+            </div>
+          </div>
+          <button class="btn btn-verde" onclick="abrirModalNuevoPrestamoProf()">
+            <i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar préstamo
+          </button>
+        </div>
+
+        <div class="her-toolbar toolbar-tabla toolbar-tabla-standalone">
+          <div class="tabs-segmentado" id="pp-chips">
+            <button class="tab-btn tab-seg" data-pp-estado="" onclick="ppFiltrarChip('',this)">Todos</button>
+            <button class="tab-btn tab-seg activo" data-pp-estado="activo" onclick="ppFiltrarChip('activo',this)">Activos</button>
+            <button class="tab-btn tab-seg" data-pp-estado="retornado" onclick="ppFiltrarChip('retornado',this)">Retornados</button>
+          </div>
+          <div class="buscar-wrap" style="max-width:240px;margin-left:auto"><span class="buscar-icono"><i data-lucide=search></i></span><input type="text" id="pp-buscar" placeholder="Buscar profesor..." style="width:100%"></div>
+        </div>
+
+        <div id="pp-tabla-wrap" class="pp-grid">
+          <div class="skel-tarjeta" aria-hidden="true">
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+              <span class="skel skel-circle" style="width:38px;height:38px"></span>
+              <span style="flex:1;min-width:0"><span class="skel skel-line" style="width:65%"></span><span class="skel skel-line" style="width:40%;height:8px"></span></span>
+            </div>
+            <div style="display:flex;gap:6px;margin-bottom:10px">
+              <span class="skel skel-line" style="width:60px;height:18px;border-radius:20px"></span>
+              <span class="skel skel-line" style="width:50px;height:18px;border-radius:20px"></span>
+            </div>
+            <span class="skel skel-line" style="width:50%;height:8px"></span>
+          </div>
+          <div class="skel-tarjeta" aria-hidden="true">
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+              <span class="skel skel-circle" style="width:38px;height:38px"></span>
+              <span style="flex:1;min-width:0"><span class="skel skel-line" style="width:65%"></span><span class="skel skel-line" style="width:40%;height:8px"></span></span>
+            </div>
+            <div style="display:flex;gap:6px;margin-bottom:10px">
+              <span class="skel skel-line" style="width:60px;height:18px;border-radius:20px"></span>
+              <span class="skel skel-line" style="width:50px;height:18px;border-radius:20px"></span>
+            </div>
+            <span class="skel skel-line" style="width:50%;height:8px"></span>
+          </div>
+          <div class="skel-tarjeta" aria-hidden="true">
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+              <span class="skel skel-circle" style="width:38px;height:38px"></span>
+              <span style="flex:1;min-width:0"><span class="skel skel-line" style="width:65%"></span><span class="skel skel-line" style="width:40%;height:8px"></span></span>
+            </div>
+            <div style="display:flex;gap:6px;margin-bottom:10px">
+              <span class="skel skel-line" style="width:60px;height:18px;border-radius:20px"></span>
+              <span class="skel skel-line" style="width:50px;height:18px;border-radius:20px"></span>
+            </div>
+            <span class="skel skel-line" style="width:50%;height:8px"></span>
+          </div>
+          <div class="skel-tarjeta" aria-hidden="true">
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+              <span class="skel skel-circle" style="width:38px;height:38px"></span>
+              <span style="flex:1;min-width:0"><span class="skel skel-line" style="width:65%"></span><span class="skel skel-line" style="width:40%;height:8px"></span></span>
+            </div>
+            <div style="display:flex;gap:6px;margin-bottom:10px">
+              <span class="skel skel-line" style="width:60px;height:18px;border-radius:20px"></span>
+              <span class="skel skel-line" style="width:50px;height:18px;border-radius:20px"></span>
+            </div>
+            <span class="skel skel-line" style="width:50%;height:8px"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="vista" id="vista-prestadas">
+        <div class="pagina-titulo">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="pagina-icono pagina-icono-prestadas"><i data-lucide=arrow-left-right></i></div>
+            <div>
+              <h2>Herramientas Prestadas</h2>
+              <p>Herramientas que salen del taller hacia otros departamentos</p>
+            </div>
+          </div>
+          <button class="btn btn-verde" onclick="abrirModalNuevoPrestamoExt()">
+            <i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar salida
+          </button>
+        </div>
+
+        <div class="her-toolbar toolbar-tabla toolbar-tabla-standalone">
+          <div class="buscar-wrap" style="max-width:280px">
+            <input type="text" id="ext-buscar" placeholder="Buscar departamento..." style="width:100%">
+            <span class="buscar-icono"><i data-lucide=search></i></span>
+          </div>
+          <!-- Sin chips de filtro: esta sección siempre muestra solo lo
+               prestado activo. Para ver lo ya devuelto, usa "Historial". -->
+        </div>
+
+        <div id="ext-tabla-wrap" class="pp-grid">
+          <div class="skel-tarjeta" aria-hidden="true">
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+              <span class="skel skel-circle" style="width:38px;height:38px"></span>
+              <span style="flex:1;min-width:0"><span class="skel skel-line" style="width:65%"></span><span class="skel skel-line" style="width:40%;height:8px"></span></span>
+            </div>
+            <div style="display:flex;gap:6px;margin-bottom:10px">
+              <span class="skel skel-line" style="width:60px;height:18px;border-radius:20px"></span>
+              <span class="skel skel-line" style="width:50px;height:18px;border-radius:20px"></span>
+            </div>
+            <span class="skel skel-line" style="width:50%;height:8px"></span>
+          </div>
+          <div class="skel-tarjeta" aria-hidden="true">
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+              <span class="skel skel-circle" style="width:38px;height:38px"></span>
+              <span style="flex:1;min-width:0"><span class="skel skel-line" style="width:65%"></span><span class="skel skel-line" style="width:40%;height:8px"></span></span>
+            </div>
+            <div style="display:flex;gap:6px;margin-bottom:10px">
+              <span class="skel skel-line" style="width:60px;height:18px;border-radius:20px"></span>
+              <span class="skel skel-line" style="width:50px;height:18px;border-radius:20px"></span>
+            </div>
+            <span class="skel skel-line" style="width:50%;height:8px"></span>
+          </div>
+          <div class="skel-tarjeta" aria-hidden="true">
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+              <span class="skel skel-circle" style="width:38px;height:38px"></span>
+              <span style="flex:1;min-width:0"><span class="skel skel-line" style="width:65%"></span><span class="skel skel-line" style="width:40%;height:8px"></span></span>
+            </div>
+            <div style="display:flex;gap:6px;margin-bottom:10px">
+              <span class="skel skel-line" style="width:60px;height:18px;border-radius:20px"></span>
+              <span class="skel skel-line" style="width:50px;height:18px;border-radius:20px"></span>
+            </div>
+            <span class="skel skel-line" style="width:50%;height:8px"></span>
+          </div>
+          <div class="skel-tarjeta" aria-hidden="true">
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+              <span class="skel skel-circle" style="width:38px;height:38px"></span>
+              <span style="flex:1;min-width:0"><span class="skel skel-line" style="width:65%"></span><span class="skel skel-line" style="width:40%;height:8px"></span></span>
+            </div>
+            <div style="display:flex;gap:6px;margin-bottom:10px">
+              <span class="skel skel-line" style="width:60px;height:18px;border-radius:20px"></span>
+              <span class="skel skel-line" style="width:50px;height:18px;border-radius:20px"></span>
+            </div>
+            <span class="skel skel-line" style="width:50%;height:8px"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="vista" id="vista-herramientas-cfg">
+        <div class="pagina-titulo">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="pagina-icono pagina-icono-taller"><i data-lucide=wrench></i></div>
+            <div>
+              <h2>Herramientas</h2>
+              <p>Pegboard del taller — inventario, categorías y uso (incluye materiales gastables)</p>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-outline" onclick="exportarHerramientasExcel()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a Excel"><i data-lucide="file-spreadsheet"></i> Excel</button>
+            <button class="btn btn-outline" onclick="exportarHerramientasPDF()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a PDF"><i data-lucide="file-text"></i> PDF</button>
+            <button class="btn btn-outline" onclick="abrirModalEntradaStock()" style="padding:9px 16px;font-size:13px" title="Registrar entrada de stock de una herramienta existente o nueva"><i data-lucide="package-plus"></i> Entrada de stock</button>
+            <button class="btn btn-verde" onclick="abrirModalHerramienta()" style="padding:9px 18px;font-size:13px" title="Agregar una nueva herramienta al inventario"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar herramienta</button>
+          </div>
+        </div>
+
+        <div class="her-stats-strip" id="her-stats-strip"></div>
+
+        <div class="her-toolbar">
+          <div class="her-categoria-chips" id="her-chips"></div>
+          <div class="buscar-wrap"><span class="buscar-icono"><i data-lucide=search style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span><input type="text" id="her-buscar" placeholder="Buscar herramienta..."></div>
+        </div>
+
+        <div id="her-cfg-wrap" class="her-grid">
+          <div class="skel-tarjeta" aria-hidden="true">
+            <span class="skel skel-block" style="display:block;width:100%;height:70px;margin-bottom:10px;border-radius:8px"></span>
+            <span class="skel skel-line" style="width:75%"></span>
+            <span class="skel skel-line" style="width:40%;height:8px"></span>
+          </div>
+          <div class="skel-tarjeta" aria-hidden="true">
+            <span class="skel skel-block" style="display:block;width:100%;height:70px;margin-bottom:10px;border-radius:8px"></span>
+            <span class="skel skel-line" style="width:75%"></span>
+            <span class="skel skel-line" style="width:40%;height:8px"></span>
+          </div>
+          <div class="skel-tarjeta" aria-hidden="true">
+            <span class="skel skel-block" style="display:block;width:100%;height:70px;margin-bottom:10px;border-radius:8px"></span>
+            <span class="skel skel-line" style="width:75%"></span>
+            <span class="skel skel-line" style="width:40%;height:8px"></span>
+          </div>
+          <div class="skel-tarjeta" aria-hidden="true">
+            <span class="skel skel-block" style="display:block;width:100%;height:70px;margin-bottom:10px;border-radius:8px"></span>
+            <span class="skel skel-line" style="width:75%"></span>
+            <span class="skel skel-line" style="width:40%;height:8px"></span>
+          </div>
+          <div class="skel-tarjeta" aria-hidden="true">
+            <span class="skel skel-block" style="display:block;width:100%;height:70px;margin-bottom:10px;border-radius:8px"></span>
+            <span class="skel skel-line" style="width:75%"></span>
+            <span class="skel skel-line" style="width:40%;height:8px"></span>
+          </div>
+          <div class="skel-tarjeta" aria-hidden="true">
+            <span class="skel skel-block" style="display:block;width:100%;height:70px;margin-bottom:10px;border-radius:8px"></span>
+            <span class="skel skel-line" style="width:75%"></span>
+            <span class="skel skel-line" style="width:40%;height:8px"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="vista" id="vista-laboratorios">
+        <div class="pagina-titulo">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="pagina-icono pagina-icono-laboratorios"><i data-lucide=building-2></i></div>
+            <div><h2>Laboratorios / Talleres</h2><p>Lista de laboratorios y talleres disponibles para elegir en el formulario del estudiante</p></div>
+          </div>
+          <button class="btn btn-verde" onclick="abrirModalLaboratorio()" style="padding:9px 18px;font-size:13px" title="Agregar un nuevo laboratorio o taller"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar laboratorio/taller</button>
+        </div>
+        <div class="seccion-tabla seccion-laboratorios">
+          <div class="tabla-header">
+            <h3>Lista de laboratorios / talleres</h3>
+            <div class="filtros">
+              <input type="text" id="lab-buscar" placeholder="Buscar...">
+            </div>
+          </div>
+          <div class="prof-resumen" id="lab-resumen"></div>
+          <div id="lab-cfg-wrap">
+            <div class="skel-fila" style="border:1px solid var(--borde);border-radius:8px;margin-bottom:8px;padding:10px 12px"><span class="skel skel-circle" style="width:30px;height:30px"></span><span class="skel-fila-textos"><span class="skel skel-line" style="width:60%"></span><span class="skel skel-line" style="width:35%;height:8px"></span></span><span class="skel skel-line" style="width:60px;height:22px;border-radius:6px"></span></div>
+            <div class="skel-fila" style="border:1px solid var(--borde);border-radius:8px;margin-bottom:8px;padding:10px 12px"><span class="skel skel-circle" style="width:30px;height:30px"></span><span class="skel-fila-textos"><span class="skel skel-line" style="width:45%"></span><span class="skel skel-line" style="width:28%;height:8px"></span></span><span class="skel skel-line" style="width:60px;height:22px;border-radius:6px"></span></div>
+            <div class="skel-fila" style="border:1px solid var(--borde);border-radius:8px;margin-bottom:8px;padding:10px 12px"><span class="skel skel-circle" style="width:30px;height:30px"></span><span class="skel-fila-textos"><span class="skel skel-line" style="width:55%"></span><span class="skel skel-line" style="width:30%;height:8px"></span></span><span class="skel skel-line" style="width:60px;height:22px;border-radius:6px"></span></div>
+            <div class="skel-fila" style="border:1px solid var(--borde);border-radius:8px;margin-bottom:8px;padding:10px 12px"><span class="skel skel-circle" style="width:30px;height:30px"></span><span class="skel-fila-textos"><span class="skel skel-line" style="width:40%"></span><span class="skel skel-line" style="width:25%;height:8px"></span></span><span class="skel skel-line" style="width:60px;height:22px;border-radius:6px"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="vista" id="vista-ciclos-cfg">
+        <div class="pagina-titulo">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="pagina-icono pagina-icono-ciclos"><i data-lucide=calendar-days></i></div>
+            <div><h2>Ciclos</h2><p>Ciclos académicos disponibles para elegir en el formulario del estudiante (ej. cuando empiece 2027)</p></div>
+          </div>
+          <button class="btn btn-verde" onclick="abrirModalCiclo()" style="padding:9px 18px;font-size:13px" title="Agregar un ciclo nuevo"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar ciclo</button>
+        </div>
+        <div class="seccion-tabla seccion-ciclos">
+          <div class="tabla-header">
+            <h3>Lista de ciclos</h3>
+            <div class="filtros">
+              <input type="text" id="ciclo-buscar" placeholder="Buscar...">
+            </div>
+          </div>
+          <div class="prof-resumen" id="ciclo-resumen"></div>
+          <div id="ciclo-cfg-wrap" class="prof-lista">
+            <div class="skel-fila" style="border:1px solid var(--borde);border-radius:8px;margin-bottom:8px;padding:10px 12px"><span class="skel skel-circle" style="width:30px;height:30px"></span><span class="skel-fila-textos"><span class="skel skel-line" style="width:60%"></span><span class="skel skel-line" style="width:35%;height:8px"></span></span><span class="skel skel-line" style="width:60px;height:22px;border-radius:6px"></span></div>
+            <div class="skel-fila" style="border:1px solid var(--borde);border-radius:8px;margin-bottom:8px;padding:10px 12px"><span class="skel skel-circle" style="width:30px;height:30px"></span><span class="skel-fila-textos"><span class="skel skel-line" style="width:45%"></span><span class="skel skel-line" style="width:28%;height:8px"></span></span><span class="skel skel-line" style="width:60px;height:22px;border-radius:6px"></span></div>
+            <div class="skel-fila" style="border:1px solid var(--borde);border-radius:8px;margin-bottom:8px;padding:10px 12px"><span class="skel skel-circle" style="width:30px;height:30px"></span><span class="skel-fila-textos"><span class="skel skel-line" style="width:55%"></span><span class="skel skel-line" style="width:30%;height:8px"></span></span><span class="skel skel-line" style="width:60px;height:22px;border-radius:6px"></span></div>
+            <div class="skel-fila" style="border:1px solid var(--borde);border-radius:8px;margin-bottom:8px;padding:10px 12px"><span class="skel skel-circle" style="width:30px;height:30px"></span><span class="skel-fila-textos"><span class="skel skel-line" style="width:40%"></span><span class="skel skel-line" style="width:25%;height:8px"></span></span><span class="skel skel-line" style="width:60px;height:22px;border-radius:6px"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="vista" id="vista-historial">
+        <div class="pagina-titulo">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="pagina-icono pagina-icono-historial"><i data-lucide=bar-chart-2></i></div>
+            <div>
+              <h2>Historial de Movimientos</h2>
+              <p>Todas las solicitudes, préstamos a profesores y salidas a departamentos</p>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-outline" onclick="exportarHistorialExcel()" title="Exportar el historial a Excel"><i data-lucide="file-spreadsheet"></i> Excel</button>
+            <button class="btn btn-outline" onclick="exportarHistorialPDF()" title="Exportar el historial a PDF"><i data-lucide="file-text"></i> PDF</button>
+          </div>
+        </div>
+
+        <div class="seccion-tabla">
+          <div class="toolbar-tabla">
+            <div class="filtros">
+              <div class="buscar-wrap" style="flex:1;min-width:200px">
+                <input type="text" id="hist-buscar" placeholder="Buscar por nombre, matrícula..." style="width:100%">
+                <span class="buscar-icono"><i data-lucide=search></i></span>
+              </div>
+              <select id="hist-tipo" style="min-width:140px">
+                <option value="">Tipo: Todos</option>
+                <option value="estudiante">Estudiante</option>
+                <option value="profesor">Profesor</option>
+                <option value="externo">Dep. Externo</option>
+              </select>
+              <select id="hist-estado" style="min-width:150px">
+                <option value="">Estado: Todos</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="entregada">Entregada</option>
+                <option value="retornada">Retornada</option>
+                <option value="cancelada">Cancelada</option>
+                <option value="incidencia">Con Incidencia</option>
+              </select>
+              <input type="date" id="hist-fecha">
+              <button id="hist-btn-limpiar" style="display:none;padding:7px 12px;background:rgba(220,38,38,.1);color:var(--rojo);border:1px solid rgba(220,38,38,.25);border-radius:8px;font-size:12px;font-weight:700;cursor:pointer"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Limpiar</button>
+            </div>
+
+            <div id="hist-tags-bar" style="display:none;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px">
+              <span style="font-size:11px;color:var(--texto-dim);font-weight:600">Filtros:</span>
+              <div id="hist-tags" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+            </div>
+          </div>
+
+          <div id="hist-tabla-wrap">
+            <div class="skel-tabla" aria-hidden="true">
+              <div class="skel-tabla-fila"><span class="skel skel-line" style="width:64px"></span><span class="skel skel-line" style="width:28px"></span><span class="skel skel-line" style="width:130px"></span><span class="skel skel-line" style="width:90px"></span><span class="skel skel-line" style="width:90px"></span><span class="skel skel-line" style="width:70px"></span></div>
+              <div class="skel-tabla-fila" style="opacity:0.85"><span class="skel skel-line" style="width:64px"></span><span class="skel skel-line" style="width:28px"></span><span class="skel skel-line" style="width:110px"></span><span class="skel skel-line" style="width:80px"></span><span class="skel skel-line" style="width:100px"></span><span class="skel skel-line" style="width:70px"></span></div>
+              <div class="skel-tabla-fila" style="opacity:0.7"><span class="skel skel-line" style="width:64px"></span><span class="skel skel-line" style="width:28px"></span><span class="skel skel-line" style="width:140px"></span><span class="skel skel-line" style="width:95px"></span><span class="skel skel-line" style="width:85px"></span><span class="skel skel-line" style="width:70px"></span></div>
+              <div class="skel-tabla-fila" style="opacity:0.55"><span class="skel skel-line" style="width:64px"></span><span class="skel skel-line" style="width:28px"></span><span class="skel skel-line" style="width:100px"></span><span class="skel skel-line" style="width:90px"></span><span class="skel skel-line" style="width:90px"></span><span class="skel skel-line" style="width:70px"></span></div>
+              <div class="skel-tabla-fila" style="opacity:0.4"><span class="skel skel-line" style="width:64px"></span><span class="skel skel-line" style="width:28px"></span><span class="skel skel-line" style="width:120px"></span><span class="skel skel-line" style="width:85px"></span><span class="skel skel-line" style="width:95px"></span><span class="skel skel-line" style="width:70px"></span></div>
+            </div>
+          </div>
+          <div class="paginacion" id="hist-paginacion">
+            <span id="hist-pag-info"></span>
+            <div class="paginacion-btns" id="hist-pag-btns"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODAL DETALLE HISTORIAL -->
+      <div class="modal-overlay" id="modal-hist">
+        <div class="modal" style="max-width:560px">
+          <div class="modal-titulo">
+            <span id="modal-hist-titulo">Detalle</span>
+            <button class="modal-cerrar" onclick="document.getElementById('modal-hist').classList.remove('abierto')"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
+          </div>
+          <div id="modal-hist-contenido"></div>
+        </div>
+      </div>
+
+      <div class="vista" id="vista-profesores-cfg">
+        <div class="pagina-titulo">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="pagina-icono pagina-icono-profesores"><i data-lucide=graduation-cap></i></div>
+            <div><h2>Profesores</h2><p>Gestión de profesores disponibles en el sistema</p></div>
+          </div>
+          <button class="btn btn-verde" onclick="abrirModalProfesor()" style="padding:9px 18px;font-size:13px" title="Agregar un nuevo profesor"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar profesor</button>
+        </div>
+        <div class="seccion-tabla seccion-profesores">
+          <div class="toolbar-tabla">
+            <div class="filtros">
+              <div class="buscar-wrap" style="max-width:260px">
+                <input type="text" id="prof-buscar" placeholder="Buscar profesor..." style="width:100%">
+                <span class="buscar-icono"><i data-lucide=search></i></span>
+              </div>
+            </div>
+          </div>
+          <div class="prof-resumen" id="prof-resumen"></div>
+          <div id="prof-cfg-wrap" class="prof-lista">
+            <div class="skel-fila" style="border:1px solid var(--borde);border-radius:8px;margin-bottom:8px;padding:10px 12px"><span class="skel skel-circle" style="width:30px;height:30px"></span><span class="skel-fila-textos"><span class="skel skel-line" style="width:60%"></span><span class="skel skel-line" style="width:35%;height:8px"></span></span><span class="skel skel-line" style="width:60px;height:22px;border-radius:6px"></span></div>
+            <div class="skel-fila" style="border:1px solid var(--borde);border-radius:8px;margin-bottom:8px;padding:10px 12px"><span class="skel skel-circle" style="width:30px;height:30px"></span><span class="skel-fila-textos"><span class="skel skel-line" style="width:45%"></span><span class="skel skel-line" style="width:28%;height:8px"></span></span><span class="skel skel-line" style="width:60px;height:22px;border-radius:6px"></span></div>
+            <div class="skel-fila" style="border:1px solid var(--borde);border-radius:8px;margin-bottom:8px;padding:10px 12px"><span class="skel skel-circle" style="width:30px;height:30px"></span><span class="skel-fila-textos"><span class="skel skel-line" style="width:55%"></span><span class="skel skel-line" style="width:30%;height:8px"></span></span><span class="skel skel-line" style="width:60px;height:22px;border-radius:6px"></span></div>
+            <div class="skel-fila" style="border:1px solid var(--borde);border-radius:8px;margin-bottom:8px;padding:10px 12px"><span class="skel skel-circle" style="width:30px;height:30px"></span><span class="skel-fila-textos"><span class="skel skel-line" style="width:40%"></span><span class="skel skel-line" style="width:25%;height:8px"></span></span><span class="skel skel-line" style="width:60px;height:22px;border-radius:6px"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="vista" id="vista-usuarios-cfg">
+        <div class="pagina-titulo">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="pagina-icono pagina-icono-usuarios"><i data-lucide=users-round></i></div>
+            <div><h2>Usuarios</h2><p>Crea cuentas de acceso y define qué puede ver cada una</p></div>
+          </div>
+          <button class="btn btn-verde" onclick="abrirModalUsuario()" style="padding:9px 18px;font-size:13px" title="Crear una nueva cuenta de acceso"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar usuario</button>
+        </div>
+        <div class="seccion-tabla seccion-usuarios">
+          <div class="tabla-header">
+            <h3>Cuentas del sistema</h3>
+            <div class="filtros">
+              <div class="buscar-wrap"><span class="buscar-icono"><i data-lucide=search style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span><input type="text" id="usr-buscar" placeholder="Buscar usuario..."></div>
+            </div>
+          </div>
+          <div class="usr-resumen" id="usr-resumen"></div>
+          <div id="usr-cfg-wrap" class="usr-lista">
+            <div class="skel-fila" style="border:1px solid var(--borde);border-radius:8px;margin-bottom:8px;padding:10px 12px"><span class="skel skel-circle" style="width:30px;height:30px"></span><span class="skel-fila-textos"><span class="skel skel-line" style="width:60%"></span><span class="skel skel-line" style="width:35%;height:8px"></span></span><span class="skel skel-line" style="width:60px;height:22px;border-radius:6px"></span></div>
+            <div class="skel-fila" style="border:1px solid var(--borde);border-radius:8px;margin-bottom:8px;padding:10px 12px"><span class="skel skel-circle" style="width:30px;height:30px"></span><span class="skel-fila-textos"><span class="skel skel-line" style="width:45%"></span><span class="skel skel-line" style="width:28%;height:8px"></span></span><span class="skel skel-line" style="width:60px;height:22px;border-radius:6px"></span></div>
+            <div class="skel-fila" style="border:1px solid var(--borde);border-radius:8px;margin-bottom:8px;padding:10px 12px"><span class="skel skel-circle" style="width:30px;height:30px"></span><span class="skel-fila-textos"><span class="skel skel-line" style="width:55%"></span><span class="skel skel-line" style="width:30%;height:8px"></span></span><span class="skel skel-line" style="width:60px;height:22px;border-radius:6px"></span></div>
+            <div class="skel-fila" style="border:1px solid var(--borde);border-radius:8px;margin-bottom:8px;padding:10px 12px"><span class="skel skel-circle" style="width:30px;height:30px"></span><span class="skel-fila-textos"><span class="skel skel-line" style="width:40%"></span><span class="skel skel-line" style="width:25%;height:8px"></span></span><span class="skel skel-line" style="width:60px;height:22px;border-radius:6px"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="vista" id="vista-auditoria-cfg">
+        <div class="pagina-titulo">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="pagina-icono pagina-icono-auditoria"><i data-lucide=shield-check></i></div>
+            <div>
+              <h2>Auditoría</h2>
+              <p>Historial de cambios realizados en el sistema</p>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-outline" onclick="exportarAuditoriaExcel()" style="padding:9px 14px;font-size:12.5px" title="Exportar la auditoría a Excel"><i data-lucide="file-spreadsheet"></i> Excel</button>
+            <button class="btn btn-outline" onclick="exportarAuditoriaPDF()" style="padding:9px 14px;font-size:12.5px" title="Exportar la auditoría a PDF"><i data-lucide="file-text"></i> PDF</button>
+          </div>
+        </div>
+        <div class="seccion-tabla seccion-auditoria">
+          <div class="toolbar-tabla">
+            <div class="filtros">
+              <select id="audit-filtro-tipo" style="padding:7px 10px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
+                <option value="">Todos los tipos</option>
+                <option value="herramienta">Herramientas</option>
+                <option value="profesor">Profesores</option>
+                <option value="usuario">Usuarios</option>
+                <option value="prestamo">Préstamos</option>
+                <option value="stock">Entradas de stock</option>
+              </select>
+              <div class="buscar-wrap" style="flex:1;min-width:180px">
+                <input type="text" id="audit-buscar" placeholder="Buscar..." style="width:100%">
+                <span class="buscar-icono"><i data-lucide=search></i></span>
+              </div>
+            </div>
+          </div>
+          <div id="audit-wrap">
+            <div class="skel-tabla" aria-hidden="true">
+              <div class="skel-tabla-fila"><span class="skel skel-line" style="width:64px"></span><span class="skel skel-line" style="width:28px"></span><span class="skel skel-line" style="width:130px"></span><span class="skel skel-line" style="width:90px"></span><span class="skel skel-line" style="width:90px"></span><span class="skel skel-line" style="width:70px"></span></div>
+              <div class="skel-tabla-fila" style="opacity:0.85"><span class="skel skel-line" style="width:64px"></span><span class="skel skel-line" style="width:28px"></span><span class="skel skel-line" style="width:110px"></span><span class="skel skel-line" style="width:80px"></span><span class="skel skel-line" style="width:100px"></span><span class="skel skel-line" style="width:70px"></span></div>
+              <div class="skel-tabla-fila" style="opacity:0.7"><span class="skel skel-line" style="width:64px"></span><span class="skel skel-line" style="width:28px"></span><span class="skel skel-line" style="width:140px"></span><span class="skel skel-line" style="width:95px"></span><span class="skel skel-line" style="width:85px"></span><span class="skel skel-line" style="width:70px"></span></div>
+              <div class="skel-tabla-fila" style="opacity:0.55"><span class="skel skel-line" style="width:64px"></span><span class="skel skel-line" style="width:28px"></span><span class="skel skel-line" style="width:100px"></span><span class="skel skel-line" style="width:90px"></span><span class="skel skel-line" style="width:90px"></span><span class="skel skel-line" style="width:70px"></span></div>
+              <div class="skel-tabla-fila" style="opacity:0.4"><span class="skel skel-line" style="width:64px"></span><span class="skel skel-line" style="width:28px"></span><span class="skel skel-line" style="width:120px"></span><span class="skel skel-line" style="width:85px"></span><span class="skel skel-line" style="width:95px"></span><span class="skel skel-line" style="width:70px"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div></div></div><div class="modal-overlay" id="modal-profesor-cfg">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-titulo">
+      <span id="prof-modal-titulo"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar profesor</span>
+      <button class="modal-cerrar" onclick="cerrarModalProfesor()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
+    </div>
+    <div class="modal-campo">
+      <label>Nombre completo</label>
+      <input type="text" id="prof-input-nombre" placeholder="Ej. Daniel Camejo"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-campo">
+      <label style="margin:0">Laboratorios/Talleres asignados</label>
+      <div id="prof-materias-wrap" style="display:flex;flex-direction:column;gap:10px;margin-top:8px;max-height:340px;overflow-y:auto"></div>
+      <button type="button" class="btn-agregar-materia" onclick="profAgregarFilaMateria()"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar materia</button>
+    </div>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModalProfesor()">Cancelar</button>
+      <button class="btn btn-verde" id="prof-btn-guardar" onclick="guardarProfesor()"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-laboratorio-cfg">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-titulo">
+      <span id="lab-modal-titulo"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar laboratorio/taller</span>
+      <button class="modal-cerrar" onclick="cerrarModalLaboratorio()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
+    </div>
+    <div class="modal-campo">
+      <label>Nombre</label>
+      <input type="text" id="lab-input-nombre" placeholder="Ej. Taller de soldadura"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModalLaboratorio()">Cancelar</button>
+      <button class="btn btn-verde" id="lab-btn-guardar" onclick="guardarLaboratorio()"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-ciclo-cfg">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-titulo">
+      <span id="ciclo-modal-titulo"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar ciclo</span>
+      <button class="modal-cerrar" onclick="cerrarModalCiclo()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
+    </div>
+    <div class="modal-campo">
+      <label>Ciclo (formato N-AAAA)</label>
+      <input type="text" id="ciclo-input-nombre" placeholder="Ej. 1-2027"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModalCiclo()">Cancelar</button>
+      <button class="btn btn-verde" id="ciclo-btn-guardar" onclick="guardarCiclo()"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CAMBIO OBLIGATORIO DE CONTRASEÑA -->
+<div class="modal-overlay" id="modal-cambiar-pass" style="z-index:999">
+  <div class="modal" style="max-width:400px;text-align:center">
+    <div style="font-size:36px;margin-bottom:8px"><i data-lucide="shield-alert" style="width:36px;height:36px;color:var(--rojo)"></i></div>
+    <h3 style="margin-bottom:6px">Debes crear tu contraseña</h3>
+    <p style="font-size:13px;color:var(--texto-dim);margin-bottom:20px">Es tu primera vez accediendo. Por seguridad, define tu propia contraseña antes de continuar.</p>
+    <div class="modal-campo" style="text-align:left">
+      <label>Contraseña temporal (la que usaste para entrar)</label>
+      <input type="password" id="pass-temporal-input" placeholder="Contraseña con la que iniciaste sesión"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-campo" style="text-align:left">
+      <label>Nueva contraseña</label>
+      <input type="password" id="nueva-pass-input" placeholder="Mínimo 8 caracteres"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-campo" style="text-align:left">
+      <label>Confirmar contraseña</label>
+      <input type="password" id="nueva-pass-confirm" placeholder="Repite la contraseña"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div id="nueva-pass-error" style="color:var(--rojo);font-size:12px;margin-bottom:8px;display:none"></div>
+    <button id="btn-confirmar-nueva-pass" class="btn btn-verde" style="width:100%;padding:12px;font-size:14px;margin-top:8px">Guardar contraseña</button>
+    <button onclick="window._signOut()" style="margin-top:10px;width:100%;padding:10px;background:none;border:none;color:var(--rojo);font-size:12px;cursor:pointer;font-weight:700"><i data-lucide="log-out"></i> Cerrar sesión e intentar de nuevo</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-usuario-cfg">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-titulo">
+      <span id="usr-modal-titulo"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar usuario</span>
+      <button class="modal-cerrar" onclick="cerrarModalUsuario()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
+    </div>
+    <div class="modal-campo">
+      <label>Nombre completo</label>
+      <input type="text" id="usr-input-nombre" placeholder="Ej. María Pérez"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-campo">
+      <label>Usuario</label>
+      <div style="display:flex;align-items:center;gap:0">
+        <input type="text" id="usr-input-email" placeholder="nombre.apellido" autocomplete="off"
+          style="flex:1;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px 0 0 8px;color:var(--texto);font-size:14px;border-right:none">
+        <span style="padding:10px 12px;background:var(--card2);border:1px solid var(--borde);border-radius:0 8px 8px 0;color:var(--texto-dim);font-size:14px;white-space:nowrap">@taller.com</span>
+      </div>
+    </div>
+    <div class="modal-campo" id="usr-pass-info" style="background:rgba(56,139,253,0.08);border:1px solid rgba(56,139,253,0.25);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--texto-dim)">
+      <i data-lucide=lock style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> El encargado iniciará con una contraseña temporal que tú le asignas. Al entrar por primera vez, el sistema le pedirá que la cambie.
+    </div>
+    <div class="modal-campo" id="usr-pass-temporal-wrap">
+      <label>Contraseña temporal <span style="color:var(--rojo)">*</span></label>
+      <input type="text" id="usr-input-pass-temp" placeholder="Ej. Taller2026"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+      <small style="color:var(--texto-dim);font-size:11px;margin-top:4px">Dásela al encargado. Él la cambiará en su primer acceso.</small>
+    </div>
+    <div class="modal-campo">
+      <label>Rol</label>
+      <select id="usr-input-rol" onchange="usrToggleSecciones()"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        <option value="administrador"><i data-lucide=crown style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Administrador (acceso total)</option>
+        <option value="encargado"><i data-lucide=lock style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Encargado (acceso limitado)</option>
+      </select>
+    </div>
+    <div class="modal-campo" id="usr-secciones-wrap" style="display:none">
+      <label>Secciones permitidas</label>
+      <div style="background:var(--bg);border:1px solid var(--borde);border-radius:8px;padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="dashboard"> Dashboard</label>
+        <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="solicitudes"> Solicitudes</label>
+        <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="prestamos-prof"> Préstamos Profesores</label>
+        <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="prestadas"> Herramientas Prestadas</label>
+        <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="incidencias"> Incidencias</label>
+        <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="laboratorios"> Talleres</label>
+        <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="ciclos-cfg"> Ciclos</label>
+        <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="historial"> Historial</label>
+        <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="profesores-cfg"> Profesores (cfg)</label>
+        <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="herramientas-cfg"> Herramientas</label>
+        <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="auditoria-cfg"> Auditoría</label>
+      </div>
+    </div>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModalUsuario()">Cancelar</button>
+      <button class="btn btn-verde" id="usr-btn-guardar" onclick="guardarUsuario()"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-nuevo-pp">
+  <div class="modal modal-picking" style="max-width:1100px">
+    <div class="modal-titulo modal-titulo-picking">
+      <span class="modal-titulo-picking-izq"><i data-lucide=mouse-pointer-click style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Toca una herramienta para agregarla</span>
+      <div class="modal-titulo-picking-der">
+        <span class="modal-titulo-espaciador" aria-hidden="true"></span>
+        <span class="modal-titulo-texto"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Nuevo préstamo a profesor</span>
+        <button class="modal-cerrar" onclick="cerrarModalNuevoProf()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
+      </div>
+    </div>
+    <div class="modal-campo">
+      <label>Profesor</label>
+      <select id="pp-select-profesor" style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        <option value="">Selecciona un profesor</option>
+      </select>
+    </div>
+    <div class="modal-campo">
+      <label>Laboratorio / Taller</label>
+      <select id="pp-select-laboratorio" style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        <option value="">Selecciona un laboratorio</option>
+      </select>
+    </div>
+    <div class="picking-layout">
+      <div class="picking-buscar">
+        <input type="text" id="pp-picker-buscar-inline" placeholder="Buscar herramienta para agregar..." oninput="renderPPPickerGridInline()"
+          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        <div id="pp-picker-grid-inline" class="her-grid picking-grid"></div>
+      </div>
+      <div class="picking-recibo">
+        <div style="font-size:11px;font-weight:700;color:var(--texto-dim);text-transform:uppercase;margin-bottom:6px">Herramientas a entregar</div>
+        <div id="pp-lista-herramientas" class="picking-recibo-lista"></div>
+        <div class="modal-acciones" style="margin-top:auto;padding-top:10px">
+          <button class="btn btn-outline" onclick="cerrarModalNuevoProf()">Cancelar</button>
+          <button class="btn btn-verde" id="pp-btn-confirmar" onclick="confirmarNuevoPrestamoProf()" title="Registrar la entrega de herramientas al profesor"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar entrega</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-confirm-custom" style="z-index:300">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-titulo"><i data-lucide="triangle-alert"></i> Confirmar</div>
+    <p id="confirm-custom-msg" style="margin:14px 0;color:var(--texto);font-size:14px;line-height:1.5"></p>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" id="confirm-custom-no">Cancelar</button>
+      <button class="btn btn-verde" id="confirm-custom-si">Sí, continuar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-pp-fotos">
+  <div class="modal modal-picking" style="max-width:1100px">
+    <div class="modal-titulo modal-titulo-picking">
+      <span class="modal-titulo-picking-izq"><i data-lucide=mouse-pointer-click style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Toca una herramienta para agregarla</span>
+      <div class="modal-titulo-picking-der">
+        <span class="modal-titulo-espaciador" aria-hidden="true"></span>
+        <span id="pp-picker-titulo" class="modal-titulo-texto"><i data-lucide=camera style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Elegir herramientas</span>
+        <button class="modal-cerrar" onclick="cerrarPickerFotosPP()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
+      </div>
+    </div>
+    <div class="picking-layout">
+      <div class="picking-buscar">
+        <input type="text" id="pp-picker-buscar" placeholder="Buscar herramienta..." oninput="renderPickerFotosPP()"
+          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        <div id="pp-picker-grid" class="her-grid picking-grid"></div>
+      </div>
+      <div class="picking-recibo">
+        <div style="font-size:11px;font-weight:700;color:var(--texto-dim);text-transform:uppercase;margin-bottom:6px">Herramientas a agregar</div>
+        <div id="pp-picker-recibo" class="picking-recibo-lista"></div>
+        <div class="modal-acciones" style="margin-top:auto;padding-top:10px">
+          <button class="btn btn-outline" onclick="cerrarPickerFotosPP()">Cancelar</button>
+          <button class="btn btn-verde" onclick="confirmarPickerFotosPP()" title="Agregar las herramientas seleccionadas al préstamo"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar seleccionadas</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-fotos-solicitud" style="z-index:200">
+  <div class="modal picker-modal">
+    <div class="picker-header">
+      <span id="sol-picker-titulo"><i data-lucide=camera style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Elegir herramientas adicionales</span>
+      <button class="modal-cerrar" onclick="cerrarPickerFotosSolicitud()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
+    </div>
+    <div class="picker-body">
+      <div class="picker-main">
+        <div class="picker-search-wrap">
+          <span class="picker-search-icono"><i data-lucide=search style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span>
+          <input type="text" id="sol-picker-buscar" placeholder="Buscar herramienta por nombre..." oninput="renderPickerFotosSolicitud()">
+        </div>
+        <div id="sol-picker-grid" class="picker-grid"></div>
+      </div>
+      <div class="picker-cart">
+        <div class="picker-cart-header">
+          <span><i data-lucide=receipt style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Ficha de picking</span>
+          <span id="sol-picker-cart-count" class="picker-cart-count">0</span>
+        </div>
+        <div class="picker-cart-perforado"></div>
+        <div id="sol-picker-cart-lista" class="picker-cart-lista"></div>
+        <div class="picker-cart-footer">
+          <button class="btn btn-outline" onclick="cerrarPickerFotosSolicitud()">Cancelar</button>
+          <button class="btn btn-verde" onclick="confirmarPickerFotosSolicitud()"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal-overlay" id="modal-retorno-pp">
+  <div class="modal modal-picking" style="max-width:1100px">
+    <div class="modal-titulo modal-titulo-picking">
+      <span class="modal-titulo-picking-izq"><i data-lucide=mouse-pointer-click style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Toca una herramienta para agregarla</span>
+      <div class="modal-titulo-picking-der">
+        <span class="modal-titulo-espaciador" aria-hidden="true"></span>
+        <span class="modal-titulo-texto"><i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Retorno — <span id="pp-retorno-nombre"></span></span>
+        <button class="modal-cerrar" onclick="cerrarModalRetornoProf()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
+      </div>
+    </div>
+    <div class="picking-layout">
+      <div class="picking-buscar">
+        <input type="text" id="pp-retorno-picker-buscar" placeholder="Buscar herramienta para agregar..." oninput="renderPPRetornoPickerGrid()"
+          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        <div id="pp-retorno-picker-grid" class="her-grid picking-grid"></div>
+      </div>
+      <div class="picking-recibo">
+        <p style="font-size:12px;color:var(--texto-dim);margin-bottom:10px">Marca el estado de cada herramienta al momento de la devolución.</p>
+        <div id="pp-retorno-lista" class="picking-recibo-lista"></div>
+        <div class="modal-campo" style="margin-top:10px">
+          <label>Nota / observación <span id="pp-retorno-nota-hint" style="color:var(--texto-dim);font-weight:400"></span></label>
+          <textarea id="pp-retorno-nota" rows="2" placeholder="Ej: no recuerdo si se devolvió en su momento..."
+            style="width:100%;padding:8px 10px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12.5px;resize:vertical"></textarea>
+        </div>
+        <div class="modal-acciones" style="margin-top:auto;padding-top:10px">
+          <button class="btn btn-outline" onclick="cerrarModalRetornoProf()">Cancelar</button>
+          <button class="btn btn-verde" onclick="confirmarRetornoProf()" title="Confirmar el retorno de las herramientas del profesor"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Confirmar retorno</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-solicitud">
+  <div class="modal">
+    <div class="modal-titulo">
+      <span id="modal-titulo-texto">Detalle de Solicitud</span>
+      <button class="modal-cerrar" id="modal-cerrar"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
+    </div>
+    <div id="modal-contenido"></div>
+    <div class="modal-acciones" id="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModal()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-nuevo-ext">
+  <div class="modal modal-picking" style="max-width:1100px">
+    <div class="modal-titulo modal-titulo-picking">
+      <span class="modal-titulo-picking-izq"><i data-lucide=mouse-pointer-click style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Toca una herramienta para agregarla</span>
+      <div class="modal-titulo-picking-der">
+        <span class="modal-titulo-espaciador" aria-hidden="true"></span>
+        <span class="modal-titulo-texto"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar salida a otro departamento</span>
+        <button class="modal-cerrar" onclick="cerrarModalNuevoExt()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
+      </div>
+    </div>
+    <div class="modal-campo">
+      <label>Departamento</label>
+      <input type="text" id="ext-departamento" placeholder="Ej. Mantenimiento, Administración..."
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-campo">
+      <label>Responsable que retira</label>
+      <input type="text" id="ext-responsable" placeholder="Nombre del responsable"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="picking-layout">
+      <div class="picking-buscar">
+        <input type="text" id="ext-picker-buscar" placeholder="Buscar herramienta para agregar..." oninput="renderExtPickerGrid()"
+          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        <div id="ext-picker-grid" class="her-grid picking-grid"></div>
+      </div>
+      <div class="picking-recibo">
+        <div style="font-size:11px;font-weight:700;color:var(--texto-dim);text-transform:uppercase;margin-bottom:6px">Herramientas que salen</div>
+        <div id="ext-lista-herramientas" class="picking-recibo-lista"></div>
+        <div class="modal-acciones" style="margin-top:auto;padding-top:10px">
+          <button class="btn btn-outline" onclick="cerrarModalNuevoExt()">Cancelar</button>
+          <button class="btn btn-verde" id="ext-btn-confirmar" onclick="confirmarNuevoPrestamoExt()" title="Registrar la salida de herramientas al departamento"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar salida</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-retorno-ext">
+  <div class="modal modal-picking" style="max-width:1100px">
+    <div class="modal-titulo modal-titulo-picking">
+      <span class="modal-titulo-picking-izq"><i data-lucide=mouse-pointer-click style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Toca una herramienta para agregarla</span>
+      <div class="modal-titulo-picking-der">
+        <span class="modal-titulo-espaciador" aria-hidden="true"></span>
+        <span class="modal-titulo-texto"><i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Retorno — <span id="ext-retorno-nombre"></span></span>
+        <button class="modal-cerrar" onclick="cerrarModalRetornoExt()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
+      </div>
+    </div>
+    <div class="picking-layout">
+      <div class="picking-buscar">
+        <input type="text" id="ext-retorno-picker-buscar" placeholder="Buscar herramienta para agregar..." oninput="renderExtRetornoPickerGrid()"
+          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        <div id="ext-retorno-picker-grid" class="her-grid picking-grid"></div>
+      </div>
+      <div class="picking-recibo">
+        <p style="font-size:12px;color:var(--texto-dim);margin-bottom:10px">Marca el estado de cada herramienta al momento de la devolución.</p>
+        <div id="ext-retorno-lista" class="picking-recibo-lista"></div>
+        <div class="modal-acciones" style="margin-top:auto;padding-top:10px">
+          <button class="btn btn-outline" onclick="cerrarModalRetornoExt()">Cancelar</button>
+          <button class="btn btn-verde" onclick="confirmarRetornoExt()" title="Confirmar el retorno de las herramientas del departamento"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Confirmar retorno</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-conduce">
+  <div class="modal modal-conduce-caja" style="max-width:680px">
+    <div class="modal-titulo">
+      <i data-lucide=file-text style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Conduce de Salida
+      <button class="modal-cerrar" onclick="cerrarModalConduce()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
+    </div>
+    <div id="conduce-contenido"></div>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModalConduce()">Cerrar</button>
+      <button class="btn btn-verde" onclick="window.print()"><i data-lucide=printer style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Imprimir</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-entrega">
+  <div class="modal modal-picking" style="max-width:1100px">
+    <div class="modal-titulo modal-titulo-picking">
+      <span class="modal-titulo-picking-izq"><i data-lucide=mouse-pointer-click style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Toca una herramienta para agregarla</span>
+      <div class="modal-titulo-picking-der">
+        <span class="modal-titulo-espaciador" aria-hidden="true"></span>
+        <span class="modal-titulo-texto"><i data-lucide=check style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Entregar Herramientas</span>
+        <button class="modal-cerrar" onclick="cerrarModalEntrega()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
+      </div>
+    </div>
+    <div class="picking-layout">
+      <div class="picking-buscar">
+        <input type="text" id="entrega-picker-buscar" placeholder="Buscar herramienta para agregar..." oninput="renderEntregaPickerGrid()"
+          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        <div id="entrega-picker-grid" class="her-grid picking-grid"></div>
+      </div>
+      <div class="picking-recibo">
+        <div id="alerta-incidencia" style="display:none;background:rgba(239,68,68,0.12);border:1px solid var(--rojo);border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:var(--rojo)"></div>
+        <div id="info-entrega" style="margin-bottom:10px;font-size:13px;color:var(--texto-dim)"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-size:11px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Herramientas a entregar</span>
+          <button class="btn-toggle-mini" id="btn-toggle-entrega" onclick="toggleMarcarTodasEntrega()" title="Marcar todas las herramientas como entregadas">Marcar todas</button>
+        </div>
+        <div id="lista-entrega" class="picking-recibo-lista"></div>
+        <div class="modal-acciones" style="margin-top:auto;padding-top:10px;flex-direction:column;gap:8px">
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-outline" onclick="cerrarModalEntrega()" style="flex:1;justify-content:center;border-color:var(--texto-dim);color:var(--texto)">Cerrar</button>
+            <button class="btn btn-azul" id="btn-guardar-sin-entregar" onclick="guardarCambiosPendiente()" style="flex:1;justify-content:center;display:none" title="Guarda los cambios en la lista sin marcarla como entregada todavía"><i data-lucide=save style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Guardar cambios</button>
+          </div>
+          <button class="btn btn-verde" onclick="confirmarEntrega()" title="Confirmar la entrega de las herramientas al estudiante" style="width:100%;justify-content:center"><i data-lucide=check style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Confirmar Entrega</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-retorno">
+  <div class="modal modal-picking" style="max-width:1100px">
+    <div class="modal-titulo modal-titulo-picking">
+      <span class="modal-titulo-picking-izq"><i data-lucide=mouse-pointer-click style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Toca una herramienta para agregarla</span>
+      <div class="modal-titulo-picking-der">
+        <span class="modal-titulo-espaciador" aria-hidden="true"></span>
+        <span class="modal-titulo-texto"><i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar Retorno</span>
+        <button class="modal-cerrar" onclick="cerrarModalRetorno()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
+      </div>
+    </div>
+    <div class="picking-layout">
+      <div class="picking-buscar">
+        <input type="text" id="retorno-picker-buscar" placeholder="Buscar herramienta para agregar..." oninput="renderRetornoPickerGrid()"
+          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        <div id="retorno-picker-grid" class="her-grid picking-grid"></div>
+      </div>
+      <div class="picking-recibo">
+        <div id="info-retorno" style="margin-bottom:10px;font-size:13px;color:var(--texto-dim)"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-size:11px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Herramientas a retornar</span>
+          <button class="btn-toggle-mini" id="btn-toggle-retorno" onclick="toggleMarcarTodasRetorno()" title="Marcar todas las herramientas como retornadas en buen estado">Marcar todas <i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
+        </div>
+        <div id="lista-retorno" class="picking-recibo-lista"></div>
+        <div class="modal-acciones" style="margin-top:auto;padding-top:10px;flex-direction:column;gap:8px">
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-outline" onclick="cerrarModalRetornoConAviso()" style="flex:1;justify-content:center;border-color:var(--texto-dim);color:var(--texto)">Cerrar</button>
+            <button class="btn btn-outline" onclick="confirmarAdicionalesRetorno()" title="Registrar entrega de herramientas adicionales al estudiante" style="flex:1;justify-content:center;font-size:11px;color:var(--azul);border-color:var(--azul)"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Confirmar adicionales</button>
+          </div>
+          <button class="btn btn-verde" onclick="confirmarRetorno()" title="Confirmar el retorno de las herramientas del estudiante" style="width:100%;justify-content:center;font-weight:800"><i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Confirmar Retorno</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<div class="modal-overlay" id="modal-entrada-stock">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-titulo">
+      <span><i data-lucide="package-plus"></i> Entrada de stock</span>
+      <button class="modal-cerrar" onclick="cerrarModalEntradaStock()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
+    </div>
+
+    <div id="entrada-modo-existente">
+      <div class="modal-campo">
+        <label>Herramienta / insumo / material</label>
+        <select id="entrada-select-herramienta"
+          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        </select>
+      </div>
+      <button type="button" class="btn btn-outline" onclick="toggleEntradaNueva(true)" style="width:100%;margin-bottom:14px;font-size:12.5px" title="Cambiar a modo: registrar una herramienta nueva"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> No está en la lista — agregar como nueva</button>
+    </div>
+
+    <div id="entrada-modo-nueva" style="display:none">
+      <div class="modal-campo">
+        <label>Nombre de la herramienta / insumo / material</label>
+        <input type="text" id="entrada-nombre-nueva" placeholder="Ej: Cinta métrica de 5m"
+          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+      </div>
+      <div class="modal-campo">
+        <label>Categoría</label>
+        <select id="entrada-categoria-nueva"
+          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+          <option value="">Sin categoría</option>
+          <option value="Medición"><i data-lucide=ruler style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Medición</option>
+          <option value="Corte"><i data-lucide=scissors style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Corte</option>
+          <option value="Golpe"><i data-lucide=hammer style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Golpe</option>
+          <option value="Sujeción"><i data-lucide=wrench style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Sujeción</option>
+          <option value="Perforación"><i data-lucide=wrench style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Perforación</option>
+          <option value="Acabado"><i data-lucide=sparkles style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Acabado</option>
+          <option value="Soldadura"><i data-lucide=zap style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Soldadura</option>
+          <option value="Seguridad"><i data-lucide=shield style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Seguridad (EPP)</option>
+          <option value="Insumos"><i data-lucide=droplet style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Insumos</option>
+          <option value="Material Gastable"><i data-lucide=briefcase style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Material Gastable</option>
+        </select>
+      </div>
+      <button type="button" class="btn btn-outline" onclick="toggleEntradaNueva(false)" style="width:100%;margin-bottom:14px;font-size:12.5px" title="Cambiar a modo: elegir una herramienta ya existente"><i data-lucide=arrow-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Ya existe, elegir de la lista</button>
+    </div>
+
+    <div class="modal-campo">
+      <label>Cantidad que entró (ej. llegó un pedido)</label>
+      <input type="number" id="entrada-cantidad" min="1" value="1"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-campo">
+      <label>Nota (opcional)</label>
+      <input type="text" id="entrada-nota" placeholder="Ej: pedido a suplidor XYZ"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModalEntradaStock()">Cancelar</button>
+      <button class="btn btn-verde" id="entrada-btn-guardar" onclick="guardarEntradaStock()"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar entrada</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-herramienta-cfg">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-titulo">
+      <span id="her-modal-titulo"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar herramienta</span>
+      <button class="modal-cerrar" onclick="cerrarModalHerramienta()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
+    </div>
+    <div class="modal-campo">
+      <label>Nombre</label>
+      <input type="text" id="her-input-nombre" placeholder="Ej: Martillo"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-campo">
+      <label>Categoría</label>
+      <select id="her-input-categoria"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        <option value="">Sin categoría</option>
+        <option value="Medición"><i data-lucide=ruler style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Medición</option>
+        <option value="Corte"><i data-lucide=scissors style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Corte</option>
+        <option value="Golpe"><i data-lucide=hammer style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Golpe</option>
+        <option value="Sujeción"><i data-lucide=wrench style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Sujeción</option>
+        <option value="Perforación"><i data-lucide=wrench style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Perforación</option>
+        <option value="Acabado"><i data-lucide=sparkles style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Acabado</option>
+        <option value="Soldadura"><i data-lucide=zap style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Soldadura</option>
+        <option value="Seguridad"><i data-lucide=shield style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Seguridad (EPP)</option>
+        <option value="Insumos"><i data-lucide=droplet style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Insumos</option>
+        <option value="Material Gastable"><i data-lucide=briefcase style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Material Gastable</option>
+      </select>
+      <small style="color:var(--texto-dim);font-size:11px">Marca "Material Gastable" para ítems que se consumen en la práctica (aparecerán con etiqueta especial en retornos)</small>
+    </div>
+    <div class="modal-campo">
+      <label>Fotografía de la herramienta</label>
+      <div id="her-drop-zone" style="border:2px dashed var(--borde);border-radius:10px;padding:16px;text-align:center;cursor:pointer;position:relative;transition:border-color .15s,background .15s">
+        <input type="file" id="her-input-foto" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+        <div id="her-drop-contenido">
+          <div id="her-foto-preview-wrap" style="width:84px;height:84px;border-radius:10px;border:1px solid var(--borde);overflow:hidden;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;background:var(--card2);font-size:30px">
+            <span id="her-foto-preview-icono"><i data-lucide=wrench style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span>
+            <img id="her-foto-preview-img" style="display:none;width:100%;height:100%;object-fit:cover">
+          </div>
+          <div style="font-size:12px;color:var(--texto-dim)" id="her-drop-texto">Arrastra una imagen aquí o haz clic para seleccionarla</div>
+        </div>
+      </div>
+      <div id="her-progreso-wrap" style="display:none;margin-top:8px">
+        <div style="background:var(--card2);border-radius:20px;height:6px;overflow:hidden">
+          <div id="her-progreso-barra" style="height:100%;width:0%;background:var(--verde);transition:width .15s"></div>
+        </div>
+        <div id="her-progreso-texto" style="font-size:11px;color:var(--texto-dim);margin-top:4px">Subiendo... 0%</div>
+      </div>
+      <div id="her-foto-exito" style="display:none;margin-top:6px;font-size:12px;color:var(--verde);font-weight:700"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Foto cargada correctamente</div>
+    </div>
+    <div class="modal-campo" id="her-icono-repuesto-wrap" style="display:none">
+      <label>Ícono de repuesto (se usa si la foto falla o no hay foto)</label>
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg);border:1px solid var(--borde);border-radius:8px">
+        <div id="her-icono-repuesto-preview" style="font-size:22px;width:28px;text-align:center;flex-shrink:0"></div>
+        <span style="font-size:11px;color:var(--texto-dim);flex:1">Este campo es antiguo y no se puede escribir a mano — si se ve roto, quítalo.</span>
+        <button type="button" class="btn btn-outline" onclick="restablecerIconoHerramienta()" style="padding:5px 10px;font-size:11px;flex-shrink:0">🔄 Quitar</button>
+      </div>
+    </div>
+    <div class="modal-campo">
+      <label>Cantidad disponible</label>
+      <input type="number" id="her-input-cantidad" min="0" value="1"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-campo">
+      <label>Límite por estudiante, por solicitud</label>
+      <input type="number" id="her-input-limite-estudiante" min="1" placeholder="Vacío = 1 (por defecto)"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+      <small style="color:var(--texto-dim);font-size:11px">Normalmente un estudiante solo puede marcar 1 unidad de cada herramienta (nadie necesita 2 martillos). Sube este número para materiales gastables como electrodos, cinta, etc.</small>
+    </div>
+    <div class="modal-campo">
+      <label>Práctica / combo (ej: Soldadura)</label>
+      <input type="text" id="her-input-practica" list="her-practica-lista" placeholder="Dejar vacío = sin agrupar"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+      <datalist id="her-practica-lista"></datalist>
+      <small style="color:var(--texto-dim);font-size:11px">Agrupa herramientas de distintas categorías que siempre se piden juntas para una práctica — el estudiante verá un botón "Agregar combo completo"</small>
+    </div>
+    <div class="modal-campo">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="her-input-uso-interno" style="width:16px;height:16px;accent-color:var(--verde);cursor:pointer">
+        <span>🔒 Uso interno del taller (no para estudiantes)</span>
+      </label>
+      <small style="color:var(--texto-dim);font-size:11px">Para herramientas propias del taller que solo se prestan a profesores/departamentos por "Herramientas Prestadas" o "Préstamos a Profesores". Márcala y no aparecerá disponible en el formulario público del estudiante.</small>
+    </div>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModalHerramienta()">Cancelar</button>
+      <button class="btn btn-verde" id="her-btn-guardar" onclick="guardarHerramienta()"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LIGHTBOX: ampliar foto de herramienta al tocarla ===== -->
+<div class="modal-overlay" id="lightbox-herramienta">
+  <button id="lightbox-cerrar" type="button" aria-label="Cerrar"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script type="module" src="app.js"></script>
+
+<script>
+  // Registro del service worker: permite instalar el panel como app de escritorio.
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("admin-sw.js").catch((err) => {
+        console.warn("No se pudo registrar el service worker del admin:", err);
+      });
+    });
+  }
+</script>
+</body>
+</html>
