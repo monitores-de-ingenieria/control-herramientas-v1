@@ -1028,7 +1028,7 @@ async function _actualizarDashboard(todas, prestProf) {
 // ── SOLICITUDES ──
 let todasSolicitudes = [];
 let paginaActual = 1;
-const porPagina = 10;
+const porPagina = 20;
 
 async function cargarSolicitudes() {
   try {
