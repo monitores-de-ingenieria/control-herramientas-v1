@@ -124,7 +124,7 @@ service cloud.firestore {
         request.resource.data.keys().hasOnly([
           "nombre", "apellido", "matricula", "ciclo", "telefono",
           "profesor", "laboratorio", "herramientas", "estado",
-          "creadoEn", "numeroSolicitud", "token"
+          "creadoEn", "numeroSolicitud", "token", "fotoCarnet"
         ]) &&
         request.resource.data.nombre is string &&
         request.resource.data.nombre.size() > 0 && request.resource.data.nombre.size() < 80 &&
@@ -138,7 +138,13 @@ service cloud.firestore {
         request.resource.data.profesor.size() > 0 && request.resource.data.profesor.size() < 100 &&
         request.resource.data.laboratorio is string &&
         request.resource.data.laboratorio.size() > 0 && request.resource.data.laboratorio.size() < 100 &&
-        (!("token" in request.resource.data) || (request.resource.data.token is string && request.resource.data.token.size() >= 16)) &&
+        request.resource.data.token is string && request.resource.data.token.size() >= 16 &&
+        // fotoCarnet: el estudiante puede no tomar foto (queda null), o
+        // mandarla como texto base64 ya comprimido en el cliente. El
+        // límite de 300,000 caracteres es solo un tope de sanidad, muy
+        // por debajo del límite real de 1MB por documento de Firestore.
+        (!("fotoCarnet" in request.resource.data) || request.resource.data.fotoCarnet == null ||
+          (request.resource.data.fotoCarnet is string && request.resource.data.fotoCarnet.size() < 300000)) &&
         request.resource.data.estado == "pendiente" &&
         request.resource.data.herramientas is list &&
         request.resource.data.herramientas.size() > 0 && request.resource.data.herramientas.size() <= 20 &&
@@ -238,17 +244,61 @@ service cloud.firestore {
         || tieneSeccion("solicitudes") || tieneSeccion("prestamos-prof") || tieneSeccion("prestadas");
     }
 
+    // Solo puede subir en +1 (o crear con ultimo == 1) — no puede meter
+    // ni cambiar ningún otro campo aprovechando este permiso abierto.
     match /contadores/{anio} {
       allow read: if true;
-      allow create: if request.resource.data.ultimo == 1;
-      allow update: if esStaff() || request.resource.data.ultimo == resource.data.ultimo + 1;
+      allow create: if request.resource.data.keys().hasOnly(["ultimo", "actualizadoEn"])
+        && request.resource.data.ultimo == 1;
+      allow update: if esStaff() || (
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["ultimo", "actualizadoEn"]) &&
+        request.resource.data.ultimo == resource.data.ultimo + 1
+      );
     }
 
+    // Solo staff con la sección correspondiente puede tocar estas dos
+    // colecciones. create/update ahora validan forma y campos (antes
+    // era "allow read, write" sin ninguna validación de contenido).
     match /prestamos_profesores/{id} {
-      allow read, write: if tieneSeccion("prestamos-prof");
+      allow read: if tieneSeccion("prestamos-prof");
+      allow create: if tieneSeccion("prestamos-prof") &&
+        request.resource.data.keys().hasOnly(["profesor", "laboratorio", "herramientas", "estado", "tieneIncidencias", "creadoEn"]) &&
+        request.resource.data.profesor is string &&
+        request.resource.data.profesor.size() > 0 && request.resource.data.profesor.size() < 120 &&
+        request.resource.data.laboratorio is string &&
+        request.resource.data.laboratorio.size() > 0 && request.resource.data.laboratorio.size() < 120 &&
+        request.resource.data.estado == "activo" &&
+        request.resource.data.herramientas is list &&
+        request.resource.data.herramientas.size() > 0 && request.resource.data.herramientas.size() <= 20 &&
+        herramientasValidas(request.resource.data.herramientas);
+      allow update: if tieneSeccion("prestamos-prof") &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          "estado", "tieneIncidencias", "retornadoEn", "herramientasRetorno",
+          "notaRetorno", "herramientas", "incidenciaVista"
+        ]) &&
+        (!("herramientas" in request.resource.data) || herramientasValidas(request.resource.data.herramientas)) &&
+        (!("herramientasRetorno" in request.resource.data) || herramientasValidas(request.resource.data.herramientasRetorno));
+      allow delete: if tieneSeccion("prestamos-prof");
     }
     match /prestamos_externos/{id} {
-      allow read, write: if tieneSeccion("prestadas");
+      allow read: if tieneSeccion("prestadas");
+      allow create: if tieneSeccion("prestadas") &&
+        request.resource.data.keys().hasOnly(["departamento", "responsable", "herramientas", "estado", "tieneIncidencias", "numeroConduce", "creadoEn"]) &&
+        request.resource.data.departamento is string &&
+        request.resource.data.departamento.size() > 0 && request.resource.data.departamento.size() < 120 &&
+        request.resource.data.responsable is string &&
+        request.resource.data.responsable.size() > 0 && request.resource.data.responsable.size() < 120 &&
+        request.resource.data.estado == "prestado" &&
+        request.resource.data.herramientas is list &&
+        request.resource.data.herramientas.size() > 0 && request.resource.data.herramientas.size() <= 20 &&
+        herramientasValidas(request.resource.data.herramientas);
+      allow update: if tieneSeccion("prestadas") &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          "estado", "tieneIncidencias", "retornadoEn", "herramientasRetorno"
+        ]) &&
+        (!("herramientas" in request.resource.data) || herramientasValidas(request.resource.data.herramientas)) &&
+        (!("herramientasRetorno" in request.resource.data) || herramientasValidas(request.resource.data.herramientasRetorno));
+      allow delete: if tieneSeccion("prestadas");
     }
 
     match /historial/{id} {
