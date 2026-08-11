@@ -278,7 +278,7 @@ service cloud.firestore {
         ]) &&
         (!("herramientas" in request.resource.data) || herramientasValidas(request.resource.data.herramientas)) &&
         (!("herramientasRetorno" in request.resource.data) || herramientasValidas(request.resource.data.herramientasRetorno));
-      allow delete: if tieneSeccion("prestamos-prof");
+      allow delete: if esAdministrador();
     }
     match /prestamos_externos/{id} {
       allow read: if tieneSeccion("prestadas");
@@ -298,12 +298,30 @@ service cloud.firestore {
         ]) &&
         (!("herramientas" in request.resource.data) || herramientasValidas(request.resource.data.herramientas)) &&
         (!("herramientasRetorno" in request.resource.data) || herramientasValidas(request.resource.data.herramientasRetorno));
-      allow delete: if tieneSeccion("prestadas");
+      allow delete: if esAdministrador();
     }
 
+    // Sin uso activo en el código actual (ni admin ni formulario escriben
+    // aquí hoy) -- se deja preparada con la misma validación estricta que
+    // el resto, por si se usa más adelante como archivo combinado de
+    // solicitudes / préstamos a profesores / préstamos externos. Si el
+    // uso real termina con campos distintos a estos, hay que ajustarla.
     match /historial/{id} {
-      allow read, write: if esAdministrador()
+      allow read: if esAdministrador()
         || tieneSeccion("prestamos-prof") || tieneSeccion("prestadas") || tieneSeccion("solicitudes");
+      allow create, update: if (esAdministrador()
+        || tieneSeccion("prestamos-prof") || tieneSeccion("prestadas") || tieneSeccion("solicitudes")) &&
+        request.resource.data.keys().hasOnly([
+          "origen", "nombre", "apellido", "matricula", "ciclo", "telefono",
+          "profesor", "laboratorio", "departamento", "responsable",
+          "herramientas", "herramientasEntregadas", "herramientasRetorno",
+          "estado", "tieneIncidencias", "notaRetorno", "numeroConduce",
+          "numeroSolicitud", "creadoEn", "retornadoEn", "actualizadoEn"
+        ]) &&
+        (!("herramientas" in request.resource.data) || herramientasValidas(request.resource.data.herramientas)) &&
+        (!("herramientasEntregadas" in request.resource.data) || herramientasValidas(request.resource.data.herramientasEntregadas)) &&
+        (!("herramientasRetorno" in request.resource.data) || herramientasValidas(request.resource.data.herramientasRetorno));
+      allow delete: if esAdministrador();
     }
 
     match /auditoria/{id} {
