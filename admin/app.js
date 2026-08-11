@@ -434,7 +434,7 @@ window.exportarAuditoriaPDF = function() {
   if (!filas.length) { mostrarToast("No hay datos para exportar", "rojo"); return; }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: "landscape" });
-  const COLOR = [79, 70, 229]; // índigo — identidad propia de Auditoría
+  const COLOR = [27, 94, 56]; // verde — igual que Inventario
   const y0 = _pdfMembrete(doc, "Historial de Auditoría", "Registro de acciones administrativas — Taller Mecánica Industrial", COLOR);
   doc.setFontSize(8.5); doc.setTextColor(90);
   doc.text(`Total de acciones registradas: ${filas.length}`, 14, y0 + 2);
@@ -445,7 +445,7 @@ window.exportarAuditoriaPDF = function() {
     body: filas.map(f => [f.Fecha, f.Hora, f.Tipo, f.Acción, f.Descripción, f.Usuario]),
     styles: { fontSize: 8 },
     headStyles: { fillColor: COLOR, textColor: 255, fontStyle: "bold" },
-    alternateRowStyles: { fillColor: [238, 237, 252] },
+    alternateRowStyles: { fillColor: [234, 244, 238] },
     margin: { left: 14, right: 14, bottom: 16 }
   });
   _pdfPiePagina(doc, COLOR);
