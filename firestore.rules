@@ -21,9 +21,13 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    // TEMPORAL: se están probando dos correos a la vez mientras se confirma
+    // que monitoresutesa@gmail.com funciona bien como admin del panel.
+    // Una vez confirmado, quitar "utesamonitores@outlook.com" de esta lista.
     function esAdminRaiz() {
       return estaAutenticado() &&
-        request.auth.token.email.lower() == "utesamonitores@outlook.com";
+        (request.auth.token.email.lower() == "utesamonitores@outlook.com" ||
+         request.auth.token.email.lower() == "monitoresutesa@gmail.com");
     }
 
     function miDocUsuario() {
