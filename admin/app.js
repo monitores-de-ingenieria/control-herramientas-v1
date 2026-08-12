@@ -3888,8 +3888,26 @@ window.abrirModalEntradaStock = function() {
   document.getElementById("entrada-input-uso-interno").checked = false;
   entradaLimpiarFoto();
   toggleEntradaNueva(false);
+  entradaActualizarPreview();
   document.getElementById("modal-entrada-stock").classList.add("abierto");
 };
+
+// Muestra, antes de guardar, qué herramienta es y en cuánto va a quedar el
+// stock -- así el usuario confirma que está agregando lo correcto (igual
+// que ya hace Salida de stock con "Disponible ahora: X").
+window.entradaActualizarPreview = function() {
+  const id = document.getElementById("entrada-select-herramienta").value;
+  const h = (_herListaActual || []).find(x => x.id === id);
+  const texto = document.getElementById("entrada-preview-texto");
+  if (!texto) return;
+  if (!h) { texto.textContent = ""; return; }
+  const actual = Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 0;
+  const cantidad = parseInt(document.getElementById("entrada-cantidad")?.value) || 0;
+  texto.textContent = `Stock actual: ${actual} → quedará en ${actual + cantidad}`;
+};
+document.getElementById("entrada-cantidad")?.addEventListener("input", () => {
+  if (document.getElementById("modal-entrada-stock")?.dataset.modoNueva !== "1") entradaActualizarPreview();
+});
 
 window.toggleEntradaNueva = function(esNueva) {
   document.getElementById("entrada-modo-existente").style.display = esNueva ? "none" : "block";
@@ -3923,6 +3941,10 @@ window.guardarEntradaStock = async function() {
         mostrarToast('Ya existe una herramienta con ese nombre — selecciónala de la lista en vez de crear otra', "rojo");
         btn.disabled = false; btn.textContent = "Registrar entrada"; return;
       }
+      const confirmadaNueva = await confirmarPersonalizado(
+        `¿Confirmas la entrada?\n\nSe creará "${nombre}"${categoria ? " (" + categoria + ")" : ""} con ${cantidad} unidad${cantidad === 1 ? "" : "es"} inicial${cantidad === 1 ? "" : "es"} en stock.`
+      );
+      if (!confirmadaNueva) { btn.disabled = false; btn.textContent = "Registrar entrada"; return; }
       const datosNuevos = { nombre, cantidadDisponible: cantidad, categoria, usoInterno, limitePorEstudiante, creadoEn: serverTimestamp() };
       if (entradaFotoArchivo) {
         btn.textContent = "Procesando foto...";
@@ -3938,6 +3960,10 @@ window.guardarEntradaStock = async function() {
       const h = (_herListaActual || []).find(x => x.id === id);
       if (!h) return;
       const nuevaCantidad = (Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 0) + cantidad;
+      const confirmadaExistente = await confirmarPersonalizado(
+        `¿Confirmas la entrada?\n\n${cantidad} unidad${cantidad === 1 ? "" : "es"} de "${h.nombre}"\nStock actual: ${h.cantidadDisponible ?? 0} → quedará en ${nuevaCantidad}`
+      );
+      if (!confirmadaExistente) { btn.disabled = false; btn.textContent = "Registrar entrada"; return; }
       if (h.local) {
         await addDoc(collection(db, "herramientas"), { nombre: h.nombre, cantidadDisponible: nuevaCantidad, categoria: h.categoria || "", codigo: h.codigo, icono: h.icono, creadoEn: serverTimestamp() });
       } else {
@@ -3999,7 +4025,7 @@ window.guardarSalidaStock = async function() {
     return;
   }
 
-  const confirmado = confirm(
+  const confirmado = await confirmarPersonalizado(
     `¿Confirmas la salida?\n\n${cantidad} unidad${cantidad === 1 ? "" : "es"} de "${h.nombre}"\nMotivo: ${motivo}${nota ? "\nNota: " + nota : ""}\n\nEsta acción descuenta el inventario y no se puede deshacer.`
   );
   if (!confirmado) return;

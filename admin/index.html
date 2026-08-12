@@ -1223,9 +1223,10 @@
     <div id="entrada-modo-existente">
       <div class="modal-campo">
         <label>Herramienta / insumo / material</label>
-        <select id="entrada-select-herramienta"
+        <select id="entrada-select-herramienta" onchange="entradaActualizarPreview()"
           style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
         </select>
+        <small id="entrada-preview-texto" style="color:var(--texto-dim);font-size:11px"></small>
       </div>
       <button type="button" class="btn btn-outline" onclick="toggleEntradaNueva(true)" style="width:100%;margin-bottom:14px;font-size:12.5px" title="Cambiar a modo: registrar una herramienta nueva"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> No está en la lista — agregar como nueva</button>
     </div>
