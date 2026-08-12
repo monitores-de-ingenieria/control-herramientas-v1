@@ -297,13 +297,22 @@
   </script>
 
   <script>
-    // Registro del service worker (PWA): habilita instalación y caché offline.
+    // El formulario del estudiante ya NO usa service worker ni PWA instalable
+    // (se quitó a propósito: no tiene sentido que el celular del estudiante
+    // quede con la app instalada después de terminar la materia). Este
+    // bloque desinstala activamente cualquier service worker que haya
+    // quedado registrado de una versión anterior del sitio, y borra su
+    // caché -- así los estudiantes que ya lo habían "instalado" antes
+    // también quedan limpios la próxima vez que abran el formulario.
     if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("sw.js").catch((err) => {
-          console.warn("No se pudo registrar el service worker:", err);
-        });
-      });
+      navigator.serviceWorker.getRegistrations().then((regs) => {
+        regs.forEach((reg) => reg.unregister());
+      }).catch(() => {});
+    }
+    if (window.caches) {
+      caches.keys().then((nombres) => {
+        nombres.forEach((nombre) => caches.delete(nombre));
+      }).catch(() => {});
     }
   </script>
 
