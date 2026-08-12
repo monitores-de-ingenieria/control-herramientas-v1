@@ -495,6 +495,7 @@
             <button class="btn btn-outline" onclick="exportarHerramientasExcel()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a Excel"><i data-lucide="file-spreadsheet"></i> Excel</button>
             <button class="btn btn-outline" onclick="exportarHerramientasPDF()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a PDF"><i data-lucide="file-text"></i> PDF</button>
             <button class="btn btn-outline" onclick="abrirModalEntradaStock()" style="padding:9px 16px;font-size:13px" title="Registrar entrada de stock de una herramienta existente o nueva"><i data-lucide="package-plus"></i> Entrada de stock</button>
+            <button class="btn btn-outline" onclick="abrirModalSalidaStock()" style="padding:9px 16px;font-size:13px;border-color:var(--rojo);color:var(--rojo)" title="Registrar salida de stock (uso interno, daño, pérdida, etc.)"><i data-lucide="package-minus"></i> Salida de stock</button>
             <button class="btn btn-verde" onclick="abrirModalHerramienta()" style="padding:9px 18px;font-size:13px" title="Agregar una nueva herramienta al inventario"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar herramienta</button>
           </div>
         </div>
@@ -1301,6 +1302,37 @@
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalEntradaStock()">Cancelar</button>
       <button class="btn btn-verde" id="entrada-btn-guardar" onclick="guardarEntradaStock()"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar entrada</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-salida-stock">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-titulo">
+      <span><i data-lucide="package-minus"></i> Salida de stock</span>
+      <button class="modal-cerrar" onclick="cerrarModalSalidaStock()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
+    </div>
+
+    <div class="modal-campo">
+      <label>Herramienta / insumo / material</label>
+      <select id="salida-select-herramienta"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px" onchange="salidaActualizarDisponible()">
+      </select>
+      <small id="salida-disponible-texto" style="color:var(--texto-dim);font-size:11px"></small>
+    </div>
+    <div class="modal-campo">
+      <label>Cantidad que salió (uso interno, daño, pérdida, etc.)</label>
+      <input type="number" id="salida-cantidad" min="1" value="1"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-campo">
+      <label>Motivo (opcional, pero recomendado)</label>
+      <input type="text" id="salida-nota" placeholder="Ej: se dañó, se usó en reparación del torno, se perdió"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModalSalidaStock()">Cancelar</button>
+      <button class="btn btn-rojo" id="salida-btn-guardar" onclick="guardarSalidaStock()"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar salida</button>
     </div>
   </div>
 </div>

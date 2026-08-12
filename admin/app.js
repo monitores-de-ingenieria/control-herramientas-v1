@@ -279,7 +279,7 @@ async function registrarAuditoria(tipo, accion, descripcion) {
 
 let _auditoriaLista = [];
 const AUDIT_ICONOS = { herramienta:'<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>', profesor:'<i data-lucide="user-round" style="width:1em;height:1em;vertical-align:-2px"></i>', materia:'<i data-lucide="book-open" style="width:1em;height:1em;vertical-align:-2px"></i>', usuario:'<i data-lucide="lock" style="width:1em;height:1em;vertical-align:-2px"></i>', prestamo:'<i data-lucide="clipboard-list" style="width:1em;height:1em;vertical-align:-2px"></i>', stock:'<i data-lucide="package" style="width:1em;height:1em;vertical-align:-2px"></i>' };
-const AUDIT_ACCION_COLOR = { crear:"var(--verde)", editar:"var(--azul)", eliminar:"var(--rojo)", entrada:"var(--amarillo)", entregar:"var(--verde)", retornar:"var(--azul)" };
+const AUDIT_ACCION_COLOR = { crear:"var(--verde)", editar:"var(--azul)", eliminar:"var(--rojo)", entrada:"var(--amarillo)", salida:"var(--rojo)", entregar:"var(--verde)", retornar:"var(--azul)" };
 
 async function cargarAuditoria() {
   const wrap = document.getElementById("audit-wrap");
@@ -3955,6 +3955,62 @@ document.getElementById("her-buscar")?.addEventListener("input", () => renderHer
 
 document.getElementById("modal-entrada-stock")?.addEventListener("click", e => {
   if (e.target === document.getElementById("modal-entrada-stock")) cerrarModalEntradaStock();
+});
+
+// ── SALIDA DE STOCK (contraparte de Entrada: uso interno, daño, pérdida, etc.) ──
+window.abrirModalSalidaStock = function() {
+  const sel = document.getElementById("salida-select-herramienta");
+  const lista = (_herListaActual || []).slice().sort((a,b) => a.nombre.localeCompare(b.nombre));
+  sel.innerHTML = lista.map(h => `<option value="${h.id}">${escapeHtml(h.nombre)} (disponible: ${h.cantidadDisponible ?? 0})</option>`).join("");
+  document.getElementById("salida-cantidad").value = 1;
+  document.getElementById("salida-nota").value = "";
+  salidaActualizarDisponible();
+  document.getElementById("modal-salida-stock").classList.add("abierto");
+};
+
+window.salidaActualizarDisponible = function() {
+  const id = document.getElementById("salida-select-herramienta").value;
+  const h = (_herListaActual || []).find(x => x.id === id);
+  const texto = document.getElementById("salida-disponible-texto");
+  const input = document.getElementById("salida-cantidad");
+  const disp = h ? (Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 0) : 0;
+  texto.textContent = h ? `Disponible ahora: ${disp}` : "";
+  input.max = disp || "";
+};
+
+window.cerrarModalSalidaStock = function() {
+  document.getElementById("modal-salida-stock").classList.remove("abierto");
+};
+
+window.guardarSalidaStock = async function() {
+  const id = document.getElementById("salida-select-herramienta").value;
+  const cantidad = parseInt(document.getElementById("salida-cantidad").value) || 0;
+  const nota = document.getElementById("salida-nota").value.trim();
+  if (!id) { mostrarToast("Selecciona una herramienta", "rojo"); return; }
+  if (cantidad <= 0) { mostrarToast("La cantidad debe ser mayor a 0", "rojo"); return; }
+
+  const h = (_herListaActual || []).find(x => x.id === id);
+  if (!h) return;
+  const disponible = Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 0;
+  if (cantidad > disponible) {
+    mostrarToast(`Solo hay ${disponible} disponible${disponible === 1 ? "" : "s"} — no puedes sacar ${cantidad}`, "rojo");
+    return;
+  }
+
+  const btn = document.getElementById("salida-btn-guardar");
+  btn.disabled = true; btn.textContent = "Guardando...";
+  try {
+    const nuevaCantidad = disponible - cantidad;
+    await updateDoc(doc(db, "herramientas", id), { cantidadDisponible: nuevaCantidad });
+    mostrarToast(`<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Salida registrada: -${cantidad} ${h.nombre}`);
+    registrarAuditoria("stock", "salida", `Salida de stock de "${h.nombre}": -${cantidad} unidad${cantidad === 1 ? "" : "es"}${nota ? " — " + nota : ""} (quedó en ${nuevaCantidad})`);
+    cerrarModalSalidaStock();
+  } catch(e) { mostrarToast("Error al registrar la salida", "rojo"); }
+  finally { btn.disabled = false; btn.textContent = "Registrar salida"; }
+};
+
+document.getElementById("modal-salida-stock")?.addEventListener("click", e => {
+  if (e.target === document.getElementById("modal-salida-stock")) cerrarModalSalidaStock();
 });
 
 document.getElementById("modal-herramienta-cfg")?.addEventListener("click", e => {
