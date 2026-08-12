@@ -495,7 +495,7 @@
             <button class="btn btn-outline" onclick="exportarHerramientasExcel()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a Excel"><i data-lucide="file-spreadsheet"></i> Excel</button>
             <button class="btn btn-outline" onclick="exportarHerramientasPDF()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a PDF"><i data-lucide="file-text"></i> PDF</button>
             <button class="btn btn-outline" onclick="abrirModalEntradaStock()" style="padding:9px 16px;font-size:13px" title="Registrar entrada de stock de una herramienta existente o nueva"><i data-lucide="package-plus"></i> Entrada de stock</button>
-            <button class="btn btn-outline" onclick="abrirModalSalidaStock()" style="padding:9px 16px;font-size:13px;border-color:var(--rojo);color:var(--rojo)" title="Registrar salida de stock (uso interno, daño, pérdida, etc.)"><i data-lucide="package-minus"></i> Salida de stock</button>
+            <button class="btn btn-outline" onclick="abrirModalSalidaStock()" style="padding:9px 16px;font-size:13px" title="Registrar salida de stock (uso interno, daño, pérdida, etc.)"><i data-lucide="package-minus"></i> Salida de stock</button>
             <button class="btn btn-verde" onclick="abrirModalHerramienta()" style="padding:9px 18px;font-size:13px" title="Agregar una nueva herramienta al inventario"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar herramienta</button>
           </div>
         </div>
@@ -1326,8 +1326,18 @@
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
     </div>
     <div class="modal-campo">
-      <label>Motivo (opcional, pero recomendado)</label>
-      <input type="text" id="salida-nota" placeholder="Ej: se dañó, se usó en reparación del torno, se perdió"
+      <label>Motivo</label>
+      <select id="salida-motivo"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        <option value="Dañada">Dañada</option>
+        <option value="Perdida">Perdida</option>
+        <option value="Uso interno">Uso interno</option>
+        <option value="Otro">Otro</option>
+      </select>
+    </div>
+    <div class="modal-campo">
+      <label>Nota (opcional)</label>
+      <input type="text" id="salida-nota" placeholder="Ej: se usó en reparación del torno"
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
     </div>
     <div class="modal-acciones">

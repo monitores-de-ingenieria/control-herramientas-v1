@@ -3963,6 +3963,7 @@ window.abrirModalSalidaStock = function() {
   const lista = (_herListaActual || []).slice().sort((a,b) => a.nombre.localeCompare(b.nombre));
   sel.innerHTML = lista.map(h => `<option value="${h.id}">${escapeHtml(h.nombre)} (disponible: ${h.cantidadDisponible ?? 0})</option>`).join("");
   document.getElementById("salida-cantidad").value = 1;
+  document.getElementById("salida-motivo").value = "Dañada";
   document.getElementById("salida-nota").value = "";
   salidaActualizarDisponible();
   document.getElementById("modal-salida-stock").classList.add("abierto");
@@ -3985,6 +3986,7 @@ window.cerrarModalSalidaStock = function() {
 window.guardarSalidaStock = async function() {
   const id = document.getElementById("salida-select-herramienta").value;
   const cantidad = parseInt(document.getElementById("salida-cantidad").value) || 0;
+  const motivo = document.getElementById("salida-motivo").value;
   const nota = document.getElementById("salida-nota").value.trim();
   if (!id) { mostrarToast("Selecciona una herramienta", "rojo"); return; }
   if (cantidad <= 0) { mostrarToast("La cantidad debe ser mayor a 0", "rojo"); return; }
@@ -3997,13 +3999,18 @@ window.guardarSalidaStock = async function() {
     return;
   }
 
+  const confirmado = confirm(
+    `¿Confirmas la salida?\n\n${cantidad} unidad${cantidad === 1 ? "" : "es"} de "${h.nombre}"\nMotivo: ${motivo}${nota ? "\nNota: " + nota : ""}\n\nEsta acción descuenta el inventario y no se puede deshacer.`
+  );
+  if (!confirmado) return;
+
   const btn = document.getElementById("salida-btn-guardar");
   btn.disabled = true; btn.textContent = "Guardando...";
   try {
     const nuevaCantidad = disponible - cantidad;
     await updateDoc(doc(db, "herramientas", id), { cantidadDisponible: nuevaCantidad });
     mostrarToast(`<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Salida registrada: -${cantidad} ${h.nombre}`);
-    registrarAuditoria("stock", "salida", `Salida de stock de "${h.nombre}": -${cantidad} unidad${cantidad === 1 ? "" : "es"}${nota ? " — " + nota : ""} (quedó en ${nuevaCantidad})`);
+    registrarAuditoria("stock", "salida", `Salida de stock de "${h.nombre}": -${cantidad} unidad${cantidad === 1 ? "" : "es"} — ${motivo}${nota ? " · " + nota : ""} (quedó en ${nuevaCantidad})`);
     cerrarModalSalidaStock();
   } catch(e) { mostrarToast("Error al registrar la salida", "rojo"); }
   finally { btn.disabled = false; btn.textContent = "Registrar salida"; }
