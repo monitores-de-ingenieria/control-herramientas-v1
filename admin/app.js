@@ -260,7 +260,7 @@ onAuthStateChanged(auth, async user => {
 });
 
 // ── ROLES Y PERMISOS ──
-const ADMIN_RAIZ = ["utesamonitores@outlook.com", "motinoresutesa@gmail.com"];
+const ADMIN_RAIZ = ["utesamonitores@outlook.com", "monitoresutesa@gmail.com"];
 let rolActual = "administrador";
 let usuarioActualNombre = "Administrador";
 
