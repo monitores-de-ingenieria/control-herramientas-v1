@@ -955,6 +955,7 @@ tr:hover td { background: var(--hover); }
   background: var(--gradiente-verde);
   color: #fff; border-radius: 16px 16px 0 0;
   letter-spacing: -.1px;
+  position: sticky; top: -24px; z-index: 5;
 }
 .modal-cerrar { background: var(--card); border: 1px solid var(--borde); color: var(--texto-dim); font-size: 16px; cursor: pointer; border-radius: 8px; width: 30px; height: 30px; display:flex; align-items:center; justify-content:center; transition: border-color .15s, color .15s; }
 .modal-cerrar:hover { border-color: var(--rojo); color: var(--rojo); }
