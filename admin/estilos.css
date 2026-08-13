@@ -191,7 +191,7 @@ h1, h2, h3,
 ═══════════════════════════════════════════ */
 .topbar {
   grid-column: 1/-1;
-  background: var(--gradiente-verde);
+  background: #1a5632 !important;
   border-bottom: none;
   box-shadow: none;
   display: flex;
