@@ -292,7 +292,7 @@
                   style="width:100%">
                 <span class="buscar-icono"><i data-lucide=search></i></span>
               </div>
-              <select id="filtro-estado" style="min-width:150px;flex-shrink:0">
+              <select id="filtro-estado" style="display:none" aria-hidden="true">
                 <option value="">Estado: Todos</option>
                 <option value="pendiente">Pendiente</option>
                 <option value="entregada">Entregada</option>
@@ -303,9 +303,9 @@
               <select id="filtro-profesor" style="min-width:150px;flex-shrink:0">
                 <option value="">Profesor: Todos</option>
               </select>
-              <label class="chip-toggle" title="Cuando está activo, las solicitudes ya retornadas no aparecen en la tabla (salvo que filtres el estado por 'Retornada')">
+              <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--texto-dim);cursor:pointer;white-space:nowrap;flex-shrink:0" title="Cuando está activo, las solicitudes ya retornadas no aparecen en la tabla (salvo que filtres el estado por 'Retornada')">
                 <input type="checkbox" id="chk-ocultar-retornadas" checked onchange="filtroOcultarRetornadasCambio()">
-                <i data-lucide=eye-off style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Ocultar retornadas
+                Ocultar retornadas
               </label>
             </div>
 
@@ -321,6 +321,7 @@
               <button class="tab-btn tab-seg" data-tab-estado="entregada">Entregados <span class="tab-badge" id="tab-ent">—</span></button>
               <button class="tab-btn tab-seg" data-tab-estado="retornada">Retornadas <span class="tab-badge" id="tab-ret">—</span></button>
               <button class="tab-btn tab-seg" data-tab-estado="cancelada">Canceladas <span class="tab-badge" id="tab-can">—</span></button>
+              <button class="tab-btn tab-seg" data-tab-estado="incidencia">Con Incidencia <span class="tab-badge" id="tab-inc">—</span></button>
             </div>
           </div>
 
@@ -495,7 +496,6 @@
             <button class="btn btn-outline" onclick="exportarHerramientasExcel()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a Excel"><i data-lucide="file-spreadsheet"></i> Excel</button>
             <button class="btn btn-outline" onclick="exportarHerramientasPDF()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a PDF"><i data-lucide="file-text"></i> PDF</button>
             <button class="btn btn-outline" onclick="abrirModalEntradaStock()" style="padding:9px 16px;font-size:13px" title="Registrar entrada de stock de una herramienta existente o nueva"><i data-lucide="package-plus"></i> Entrada de stock</button>
-            <button class="btn btn-outline" onclick="abrirModalSalidaStock()" style="padding:9px 16px;font-size:13px" title="Registrar salida de stock (uso interno, daño, pérdida, etc.)"><i data-lucide="package-minus"></i> Salida de stock</button>
             <button class="btn btn-verde" onclick="abrirModalHerramienta()" style="padding:9px 18px;font-size:13px" title="Agregar una nueva herramienta al inventario"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar herramienta</button>
           </div>
         </div>
@@ -907,10 +907,10 @@
 <div class="modal-overlay" id="modal-nuevo-pp">
   <div class="modal modal-picking" style="max-width:1100px">
     <div class="modal-titulo modal-titulo-picking">
-      <span class="modal-titulo-picking-izq"><i data-lucide=mouse-pointer-click style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Toca una herramienta para agregarla</span>
+      <span class="modal-titulo-picking-izq">Toca una herramienta para agregarla</span>
       <div class="modal-titulo-picking-der">
-        <span class="modal-titulo-espaciador" aria-hidden="true"></span>
-        <span class="modal-titulo-texto"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Nuevo préstamo a profesor</span>
+        <span class="modal-titulo-picking-espaciador" aria-hidden="true"></span>
+        <span><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Nuevo préstamo a profesor</span>
         <button class="modal-cerrar" onclick="cerrarModalNuevoProf()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
       </div>
     </div>
@@ -933,7 +933,7 @@
         <div id="pp-picker-grid-inline" class="her-grid picking-grid"></div>
       </div>
       <div class="picking-recibo">
-        <div style="font-size:11px;font-weight:700;color:var(--texto-dim);text-transform:uppercase;margin-bottom:6px">Herramientas a entregar</div>
+        <div style="font-size:11px;font-weight:700;color:var(--texto-dim);text-transform:uppercase;margin-bottom:6px">Recibo de entrega</div>
         <div id="pp-lista-herramientas" class="picking-recibo-lista"></div>
         <div class="modal-acciones" style="margin-top:auto;padding-top:10px">
           <button class="btn btn-outline" onclick="cerrarModalNuevoProf()">Cancelar</button>
@@ -958,10 +958,10 @@
 <div class="modal-overlay" id="modal-pp-fotos">
   <div class="modal modal-picking" style="max-width:1100px">
     <div class="modal-titulo modal-titulo-picking">
-      <span class="modal-titulo-picking-izq"><i data-lucide=mouse-pointer-click style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Toca una herramienta para agregarla</span>
+      <span class="modal-titulo-picking-izq">Toca una herramienta para agregarla</span>
       <div class="modal-titulo-picking-der">
-        <span class="modal-titulo-espaciador" aria-hidden="true"></span>
-        <span id="pp-picker-titulo" class="modal-titulo-texto"><i data-lucide=camera style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Elegir herramientas</span>
+        <span class="modal-titulo-picking-espaciador" aria-hidden="true"></span>
+        <span id="pp-picker-titulo"><i data-lucide=camera style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Elegir herramientas</span>
         <button class="modal-cerrar" onclick="cerrarPickerFotosPP()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
       </div>
     </div>
@@ -1017,10 +1017,10 @@
 <div class="modal-overlay" id="modal-retorno-pp">
   <div class="modal modal-picking" style="max-width:1100px">
     <div class="modal-titulo modal-titulo-picking">
-      <span class="modal-titulo-picking-izq"><i data-lucide=mouse-pointer-click style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Toca una herramienta para agregarla</span>
+      <span class="modal-titulo-picking-izq">Toca una herramienta para agregarla</span>
       <div class="modal-titulo-picking-der">
-        <span class="modal-titulo-espaciador" aria-hidden="true"></span>
-        <span class="modal-titulo-texto"><i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Retorno — <span id="pp-retorno-nombre"></span></span>
+        <span class="modal-titulo-picking-espaciador" aria-hidden="true"></span>
+        <span><i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Retorno — <span id="pp-retorno-nombre"></span></span>
         <button class="modal-cerrar" onclick="cerrarModalRetornoProf()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
       </div>
     </div>
@@ -1063,10 +1063,10 @@
 <div class="modal-overlay" id="modal-nuevo-ext">
   <div class="modal modal-picking" style="max-width:1100px">
     <div class="modal-titulo modal-titulo-picking">
-      <span class="modal-titulo-picking-izq"><i data-lucide=mouse-pointer-click style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Toca una herramienta para agregarla</span>
+      <span class="modal-titulo-picking-izq">Toca una herramienta para agregarla</span>
       <div class="modal-titulo-picking-der">
-        <span class="modal-titulo-espaciador" aria-hidden="true"></span>
-        <span class="modal-titulo-texto"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar salida a otro departamento</span>
+        <span class="modal-titulo-picking-espaciador" aria-hidden="true"></span>
+        <span><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar salida a otro departamento</span>
         <button class="modal-cerrar" onclick="cerrarModalNuevoExt()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
       </div>
     </div>
@@ -1101,10 +1101,10 @@
 <div class="modal-overlay" id="modal-retorno-ext">
   <div class="modal modal-picking" style="max-width:1100px">
     <div class="modal-titulo modal-titulo-picking">
-      <span class="modal-titulo-picking-izq"><i data-lucide=mouse-pointer-click style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Toca una herramienta para agregarla</span>
+      <span class="modal-titulo-picking-izq">Toca una herramienta para agregarla</span>
       <div class="modal-titulo-picking-der">
-        <span class="modal-titulo-espaciador" aria-hidden="true"></span>
-        <span class="modal-titulo-texto"><i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Retorno — <span id="ext-retorno-nombre"></span></span>
+        <span class="modal-titulo-picking-espaciador" aria-hidden="true"></span>
+        <span><i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Retorno — <span id="ext-retorno-nombre"></span></span>
         <button class="modal-cerrar" onclick="cerrarModalRetornoExt()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
       </div>
     </div>
@@ -1143,10 +1143,10 @@
 <div class="modal-overlay" id="modal-entrega">
   <div class="modal modal-picking" style="max-width:1100px">
     <div class="modal-titulo modal-titulo-picking">
-      <span class="modal-titulo-picking-izq"><i data-lucide=mouse-pointer-click style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Toca una herramienta para agregarla</span>
+      <span class="modal-titulo-picking-izq">Toca una herramienta para agregarla</span>
       <div class="modal-titulo-picking-der">
-        <span class="modal-titulo-espaciador" aria-hidden="true"></span>
-        <span class="modal-titulo-texto"><i data-lucide=check style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Entregar Herramientas</span>
+        <span class="modal-titulo-picking-espaciador" aria-hidden="true"></span>
+        <span><i data-lucide=check style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Entregar Herramientas</span>
         <button class="modal-cerrar" onclick="cerrarModalEntrega()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
       </div>
     </div>
@@ -1160,16 +1160,14 @@
         <div id="alerta-incidencia" style="display:none;background:rgba(239,68,68,0.12);border:1px solid var(--rojo);border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:var(--rojo)"></div>
         <div id="info-entrega" style="margin-bottom:10px;font-size:13px;color:var(--texto-dim)"></div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-          <span style="font-size:11px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Herramientas a entregar</span>
-          <button class="btn-toggle-mini" id="btn-toggle-entrega" onclick="toggleMarcarTodasEntrega()" title="Marcar todas las herramientas como entregadas">Marcar todas</button>
+          <span style="font-size:11px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Recibo de entrega</span>
+          <button class="btn btn-outline" id="btn-toggle-entrega" onclick="toggleMarcarTodasEntrega()" style="padding:4px 10px;font-size:11px" title="Marcar todas las herramientas como entregadas">Marcar todas</button>
         </div>
         <div id="lista-entrega" class="picking-recibo-lista"></div>
-        <div class="modal-acciones" style="margin-top:auto;padding-top:10px;flex-direction:column;gap:8px">
-          <div style="display:flex;gap:6px">
-            <button class="btn btn-outline" onclick="cerrarModalEntrega()" style="flex:1;justify-content:center;border-color:var(--texto-dim);color:var(--texto)">Cerrar</button>
-            <button class="btn btn-azul" id="btn-guardar-sin-entregar" onclick="guardarCambiosPendiente()" style="flex:1;justify-content:center;display:none" title="Guarda los cambios en la lista sin marcarla como entregada todavía"><i data-lucide=save style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Guardar cambios</button>
-          </div>
-          <button class="btn btn-verde" onclick="confirmarEntrega()" title="Confirmar la entrega de las herramientas al estudiante" style="width:100%;justify-content:center"><i data-lucide=check style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Confirmar Entrega</button>
+        <div class="modal-acciones" style="margin-top:auto;padding-top:10px">
+          <button class="btn btn-outline" onclick="cerrarModalEntrega()">Cerrar</button>
+          <button class="btn btn-azul" id="btn-guardar-sin-entregar" onclick="guardarCambiosPendiente()" style="display:none" title="Guarda los cambios en la lista sin marcarla como entregada todavía"><i data-lucide=save style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Guardar cambios</button>
+          <button class="btn btn-verde" onclick="confirmarEntrega()" title="Confirmar la entrega de las herramientas al estudiante"><i data-lucide=check style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Confirmar Entrega</button>
         </div>
       </div>
     </div>
@@ -1179,10 +1177,10 @@
 <div class="modal-overlay" id="modal-retorno">
   <div class="modal modal-picking" style="max-width:1100px">
     <div class="modal-titulo modal-titulo-picking">
-      <span class="modal-titulo-picking-izq"><i data-lucide=mouse-pointer-click style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Toca una herramienta para agregarla</span>
+      <span class="modal-titulo-picking-izq">Toca una herramienta para agregarla</span>
       <div class="modal-titulo-picking-der">
-        <span class="modal-titulo-espaciador" aria-hidden="true"></span>
-        <span class="modal-titulo-texto"><i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar Retorno</span>
+        <span class="modal-titulo-picking-espaciador" aria-hidden="true"></span>
+        <span><i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar Retorno</span>
         <button class="modal-cerrar" onclick="cerrarModalRetorno()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
       </div>
     </div>
@@ -1195,16 +1193,14 @@
       <div class="picking-recibo">
         <div id="info-retorno" style="margin-bottom:10px;font-size:13px;color:var(--texto-dim)"></div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-          <span style="font-size:11px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Herramientas a retornar</span>
-          <button class="btn-toggle-mini" id="btn-toggle-retorno" onclick="toggleMarcarTodasRetorno()" title="Marcar todas las herramientas como retornadas en buen estado">Marcar todas <i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
+          <span style="font-size:11px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Estado de cada herramienta</span>
+          <button class="btn btn-outline" id="btn-toggle-retorno" onclick="toggleMarcarTodasRetorno()" style="padding:4px 10px;font-size:11px" title="Marcar todas las herramientas como retornadas en buen estado">Marcar todas <i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
         </div>
         <div id="lista-retorno" class="picking-recibo-lista"></div>
-        <div class="modal-acciones" style="margin-top:auto;padding-top:10px;flex-direction:column;gap:8px">
-          <div style="display:flex;gap:6px">
-            <button class="btn btn-outline" onclick="cerrarModalRetornoConAviso()" style="flex:1;justify-content:center;border-color:var(--texto-dim);color:var(--texto)">Cerrar</button>
-            <button class="btn btn-outline" onclick="confirmarAdicionalesRetorno()" title="Registrar entrega de herramientas adicionales al estudiante" style="flex:1;justify-content:center;font-size:11px;color:var(--azul);border-color:var(--azul)"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Confirmar adicionales</button>
-          </div>
-          <button class="btn btn-verde" onclick="confirmarRetorno()" title="Confirmar el retorno de las herramientas del estudiante" style="width:100%;justify-content:center;font-weight:800"><i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Confirmar Retorno</button>
+        <div class="modal-acciones" style="margin-top:auto;padding-top:10px;flex-wrap:wrap;gap:6px">
+          <button class="btn btn-outline" onclick="cerrarModalRetornoConAviso()">Cerrar</button>
+          <button class="btn btn-outline" onclick="confirmarAdicionalesRetorno()" title="Registrar entrega de herramientas adicionales al estudiante" style="font-size:11px;color:var(--azul);border-color:var(--azul)"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Confirmar adicionales</button>
+          <button class="btn btn-verde" onclick="confirmarRetorno()" title="Confirmar el retorno de las herramientas del estudiante" style="font-weight:800"><i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Confirmar Retorno</button>
         </div>
       </div>
     </div>
@@ -1223,10 +1219,9 @@
     <div id="entrada-modo-existente">
       <div class="modal-campo">
         <label>Herramienta / insumo / material</label>
-        <select id="entrada-select-herramienta" onchange="entradaActualizarPreview()"
+        <select id="entrada-select-herramienta"
           style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
         </select>
-        <small id="entrada-preview-texto" style="color:var(--texto-dim);font-size:11px"></small>
       </div>
       <button type="button" class="btn btn-outline" onclick="toggleEntradaNueva(true)" style="width:100%;margin-bottom:14px;font-size:12.5px" title="Cambiar a modo: registrar una herramienta nueva"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> No está en la lista — agregar como nueva</button>
     </div>
@@ -1254,39 +1249,6 @@
           <option value="Material Gastable"><i data-lucide=briefcase style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Material Gastable</option>
         </select>
       </div>
-      <div class="modal-campo">
-        <label>Fotografía (opcional)</label>
-        <div id="entrada-drop-zone" style="border:2px dashed var(--borde);border-radius:10px;padding:16px;text-align:center;cursor:pointer;position:relative;transition:border-color .15s,background .15s">
-          <input type="file" id="entrada-input-foto" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer">
-          <div id="entrada-drop-contenido">
-            <div id="entrada-foto-preview-wrap" style="width:70px;height:70px;border-radius:10px;border:1px solid var(--borde);overflow:hidden;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;background:var(--card2);font-size:26px">
-              <span id="entrada-foto-preview-icono"><i data-lucide=wrench style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span>
-              <img id="entrada-foto-preview-img" style="display:none;width:100%;height:100%;object-fit:cover">
-            </div>
-            <div style="font-size:11.5px;color:var(--texto-dim)" id="entrada-drop-texto">Arrastra una imagen aquí o haz clic para seleccionarla</div>
-          </div>
-        </div>
-        <div id="entrada-progreso-wrap" style="display:none;margin-top:8px">
-          <div style="background:var(--card2);border-radius:20px;height:6px;overflow:hidden">
-            <div id="entrada-progreso-barra" style="height:100%;width:0%;background:var(--verde);transition:width .15s"></div>
-          </div>
-          <div id="entrada-progreso-texto" style="font-size:11px;color:var(--texto-dim);margin-top:4px">Subiendo... 0%</div>
-        </div>
-        <div id="entrada-foto-exito" style="display:none;margin-top:6px;font-size:12px;color:var(--verde);font-weight:700"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Foto cargada correctamente</div>
-      </div>
-      <div class="modal-campo">
-        <label>Límite por estudiante, por solicitud</label>
-        <input type="number" id="entrada-input-limite-estudiante" min="1" placeholder="Vacío = 1 (por defecto)"
-          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
-        <small style="color:var(--texto-dim);font-size:11px">Normalmente un estudiante solo puede marcar 1 unidad de cada herramienta. Sube este número para materiales gastables (electrodos, cinta, etc.)</small>
-      </div>
-      <div class="modal-campo">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-          <input type="checkbox" id="entrada-input-uso-interno" style="width:16px;height:16px;accent-color:var(--verde);cursor:pointer">
-          <span>🔒 Uso interno del taller (no para estudiantes)</span>
-        </label>
-        <small style="color:var(--texto-dim);font-size:11px">Para herramientas propias del taller que solo se prestan a profesores/departamentos. No aparecerá en el formulario público del estudiante.</small>
-      </div>
       <button type="button" class="btn btn-outline" onclick="toggleEntradaNueva(false)" style="width:100%;margin-bottom:14px;font-size:12.5px" title="Cambiar a modo: elegir una herramienta ya existente"><i data-lucide=arrow-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Ya existe, elegir de la lista</button>
     </div>
 
@@ -1303,48 +1265,6 @@
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalEntradaStock()">Cancelar</button>
       <button class="btn btn-verde" id="entrada-btn-guardar" onclick="guardarEntradaStock()"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar entrada</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-salida-stock">
-  <div class="modal" style="max-width:420px">
-    <div class="modal-titulo">
-      <span><i data-lucide="package-minus"></i> Salida de stock</span>
-      <button class="modal-cerrar" onclick="cerrarModalSalidaStock()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
-    </div>
-
-    <div class="modal-campo">
-      <label>Herramienta / insumo / material</label>
-      <select id="salida-select-herramienta"
-        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px" onchange="salidaActualizarDisponible()">
-      </select>
-      <small id="salida-disponible-texto" style="color:var(--texto-dim);font-size:11px"></small>
-    </div>
-    <div class="modal-campo">
-      <label>Cantidad que salió (uso interno, daño, pérdida, etc.)</label>
-      <input type="number" id="salida-cantidad" min="1" value="1"
-        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
-    </div>
-    <div class="modal-campo">
-      <label>Motivo</label>
-      <select id="salida-motivo"
-        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
-        <option value="Tramo estudiantes">Trasladada al estante de uso diario</option>
-        <option value="Uso interno">Uso interno del taller</option>
-        <option value="Dañada">Dañada</option>
-        <option value="Perdida">Perdida</option>
-        <option value="Otro">Otro</option>
-      </select>
-    </div>
-    <div class="modal-campo">
-      <label>Nota (opcional)</label>
-      <input type="text" id="salida-nota" placeholder="Ej: se usó en reparación del torno"
-        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
-    </div>
-    <div class="modal-acciones">
-      <button class="btn btn-outline" onclick="cerrarModalSalidaStock()">Cancelar</button>
-      <button class="btn btn-rojo" id="salida-btn-guardar" onclick="guardarSalidaStock()"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar salida</button>
     </div>
   </div>
 </div>

@@ -628,6 +628,7 @@ function actualizarTabs() {
   set("tab-ent",   tots.filter(s => s.estado === "entregada").length);
   set("tab-ret",   tots.filter(s => s.estado === "retornada").length);
   set("tab-can",   tots.filter(s => s.estado === "cancelada").length);
+  set("tab-inc",   tots.filter(s => s.tieneIncidencias === true).length);
   const entregadasHoy = tots.filter(s => s.estado === "entregada");
   let totalHerr = 0, totalGast = 0;
   entregadasHoy.forEach(s => (s.herramientasEntregadas || s.herramientas || []).forEach(h => {
@@ -1111,7 +1112,7 @@ function solicitudesFiltradas() {
       : estado === "incidencia"
         ? s.tieneIncidencias === true
         : s.estado === estado;
-    const profMatch = !profesor || s.profesor === profesor;
+    const profMatch = !profesor || (s.profesor || "").trim().toLowerCase() === profesor.trim().toLowerCase();
     return textoMatch && estadoMatch && profMatch;
   });
   const val = (s) => {
