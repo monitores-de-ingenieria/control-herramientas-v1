@@ -1109,7 +1109,7 @@ function solicitudesFiltradas() {
   const filtradas = todasSolicitudes.filter(s => {
     if (estado !== "incidencia" && !esMismodia(s.creadoEn)) return false;
     if (ocultarRetornadas && s.estado === "retornada") return false;
-    const textoMatch = !buscar || `${s.nombre} ${s.apellido} ${s.matricula}`.toLowerCase().includes(buscar);
+    const textoMatch = !buscar || `${s.nombre} ${s.apellido} ${s.matricula} ${s.profesor || ""}`.toLowerCase().includes(buscar);
     const estadoMatch = !estado
       ? true
       : estado === "incidencia"
