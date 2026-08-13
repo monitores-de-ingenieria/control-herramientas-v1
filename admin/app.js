@@ -4895,6 +4895,44 @@ window.exportarHerramientasExcel = function() {
   mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Inventario exportado a Excel');
 };
 
+window.respaldarFotosHerramientas = async function() {
+  const lista = (_herListaActual || []).filter(h => h.fotoUrl);
+  if (!lista.length) { mostrarToast("No hay fotos subidas desde el panel para respaldar", "rojo"); return; }
+  if (!window.JSZip) { mostrarToast("No se pudo cargar la herramienta de compresión (JSZip)", "rojo"); return; }
+
+  mostrarToast(`Preparando ${lista.length} foto${lista.length === 1 ? "" : "s"}...`);
+  const zip = new JSZip();
+  let ok = 0, fallidas = 0;
+
+  for (const h of lista) {
+    try {
+      const resp = await fetch(h.fotoUrl); // funciona tanto con data:URL (base64) como con una URL http normal
+      const blob = await resp.blob();
+      const nombreArchivo = (h.codigo || h.id || h.nombre || "herramienta").replace(/[^a-zA-Z0-9_-]/g, "_") + ".jpg";
+      zip.file(nombreArchivo, blob);
+      ok++;
+    } catch {
+      fallidas++;
+    }
+  }
+
+  if (!ok) { mostrarToast("No se pudo preparar ninguna foto", "rojo"); return; }
+
+  const contenido = await zip.generateAsync({ type: "blob" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(contenido);
+  a.download = `respaldo-fotos-herramientas_${new Date().toLocaleDateString("es-DO").replace(/\//g,"-")}.zip`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  mostrarToast(
+    fallidas
+      ? `<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> ${ok} foto${ok===1?"":"s"} respaldada${ok===1?"":"s"} (${fallidas} fallaron)`
+      : `<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> ${ok} foto${ok===1?"":"s"} lista${ok===1?"":"s"} en el .zip descargado`
+  );
+};
+
 window.exportarHerramientasPDF = function() {
   const lista = _herListaActual || [];
   if (!lista.length) { mostrarToast("No hay herramientas que exportar", "rojo"); return; }

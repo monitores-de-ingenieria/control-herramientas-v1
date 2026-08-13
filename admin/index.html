@@ -16,6 +16,7 @@
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
 
@@ -495,6 +496,7 @@
           <div style="display:flex;gap:8px">
             <button class="btn btn-outline" onclick="exportarHerramientasExcel()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a Excel"><i data-lucide="file-spreadsheet"></i> Excel</button>
             <button class="btn btn-outline" onclick="exportarHerramientasPDF()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a PDF"><i data-lucide="file-text"></i> PDF</button>
+            <button class="btn btn-outline" onclick="respaldarFotosHerramientas()" style="padding:9px 14px;font-size:12px" title="Descarga en un .zip todas las fotos subidas desde el panel, listas para subir a img/herramientas/ en GitHub"><i data-lucide="image-down"></i> Respaldar fotos</button>
             <button class="btn btn-outline" onclick="abrirModalEntradaStock()" style="padding:9px 16px;font-size:13px" title="Registrar entrada de stock de una herramienta existente o nueva"><i data-lucide="package-plus"></i> Entrada de stock</button>
             <button class="btn btn-outline" onclick="abrirModalSalidaStock()" style="padding:9px 16px;font-size:13px" title="Registrar salida de stock (uso interno, daño, pérdida, etc.)"><i data-lucide="package-minus"></i> Salida de stock</button>
             <button class="btn btn-verde" onclick="abrirModalHerramienta()" style="padding:9px 18px;font-size:13px" title="Agregar una nueva herramienta al inventario"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar herramienta</button>
