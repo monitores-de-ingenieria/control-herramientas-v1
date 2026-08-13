@@ -947,6 +947,8 @@ tr:hover td { background: var(--hover); }
   width: 100%; max-width: 560px; max-height: 92vh; overflow-y: auto;
   box-shadow: var(--sombra-lg);
 }
+.modal:has(> .modal-cuerpo) { overflow-y: visible; display: flex; flex-direction: column; }
+.modal-cuerpo { overflow-y: auto; max-height: 65vh; }
 
 .modal-titulo {
   font-size: 16px; font-weight: 600; margin-bottom: 18px;

@@ -661,7 +661,9 @@
             <span id="modal-hist-titulo">Detalle</span>
             <button class="modal-cerrar" onclick="document.getElementById('modal-hist').classList.remove('abierto')"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
           </div>
-          <div id="modal-hist-contenido"></div>
+          <div class="modal-cuerpo">
+            <div id="modal-hist-contenido"></div>
+          </div>
         </div>
       </div>
 
@@ -1054,9 +1056,11 @@
       <span id="modal-titulo-texto">Detalle de Solicitud</span>
       <button class="modal-cerrar" id="modal-cerrar"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
     </div>
-    <div id="modal-contenido"></div>
-    <div class="modal-acciones" id="modal-acciones">
-      <button class="btn btn-outline" onclick="cerrarModal()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Cerrar</button>
+    <div class="modal-cuerpo">
+      <div id="modal-contenido"></div>
+      <div class="modal-acciones" id="modal-acciones">
+        <button class="btn btn-outline" onclick="cerrarModal()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Cerrar</button>
+      </div>
     </div>
   </div>
 </div>
