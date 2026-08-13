@@ -1061,8 +1061,8 @@ function cargarSelectores() {
   getDocs(collection(db, "profesores")).then(snap => {
     snap.docs
       .map(d => d.data())
-      .filter(p => !p.eliminado)
-      .sort((a,b) => a.nombre.localeCompare(b.nombre))
+      .filter(p => !p.eliminado && p.nombre)
+      .sort((a,b) => (a.nombre || "").localeCompare(b.nombre || ""))
       .forEach(p => {
         const opt = document.createElement("option");
         opt.value = p.nombre; opt.textContent = p.nombre;
