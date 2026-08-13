@@ -1386,6 +1386,11 @@
       <small style="color:var(--texto-dim);font-size:11px">Marca "Material Gastable" para ítems que se consumen en la práctica (aparecerán con etiqueta especial en retornos)</small>
     </div>
     <div class="modal-campo">
+      <label>Código <span style="color:var(--texto-dim);font-weight:400">(nombre del archivo en img/herramientas/ — déjalo vacío para que se genere solo)</span></label>
+      <input type="text" id="her-input-codigo" placeholder="Ej: HER-040"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-campo">
       <label>Fotografía de la herramienta</label>
       <div id="her-drop-zone" style="border:2px dashed var(--borde);border-radius:10px;padding:16px;text-align:center;cursor:pointer;position:relative;transition:border-color .15s,background .15s">
         <input type="file" id="her-input-foto" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer">

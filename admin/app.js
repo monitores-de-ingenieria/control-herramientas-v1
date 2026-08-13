@@ -3627,6 +3627,7 @@ window.abrirModalHerramienta = function(id = null, nombre = "", cantidad = 1, es
   inputNombre.style.opacity = "1";
   const categoriaFinal = datosActuales?.categoria || refLista?.categoria || categoria || "";
   document.getElementById("her-input-categoria").value = categoriaFinal;
+  document.getElementById("her-input-codigo").value = herCfgCodigoLocal || "";
   document.getElementById("her-input-cantidad").value = cantidad;
   document.getElementById("her-input-limite-estudiante").value = datosActuales?.limitePorEstudiante || "";
   document.getElementById("her-input-practica").value = datosActuales?.practica || "";
@@ -3782,8 +3783,11 @@ window.guardarHerramienta = async function() {
   btn.disabled = true; btn.textContent = "Guardando...";
   const nombreFinal = nombre;
   const datos = { nombre: nombreFinal, cantidadDisponible: cantidad, categoria, practica, usoInterno, limitePorEstudiante };
-  // No perder codigo/icono del respaldo al editar solo cantidad/nombre.
-  if (herCfgCodigoLocal) datos.codigo = herCfgCodigoLocal;
+  const codigoInput = document.getElementById("her-input-codigo").value.trim();
+  // Si el usuario escribió algo, usa eso. Si lo dejó vacío, conserva el código
+  // que ya tenía (respaldo/edición) para no perderlo por accidente.
+  const codigoFinal = codigoInput || herCfgCodigoLocal;
+  if (codigoFinal) datos.codigo = codigoFinal;
   if (herIconoLimpiarFlag) {
     datos.icono = null; // fuerza a Firestore a borrar el valor viejo (roto)
   } else if (herCfgIconoLocal) {
@@ -3843,6 +3847,13 @@ window.guardarHerramienta = async function() {
         mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Ya existía esa herramienta — se actualizó en vez de duplicarla');
         registrarAuditoria("herramienta", "editar", `Editó la herramienta "${nombreFinal}"${describirCambios(antesExistente)}`);
       } else {
+        if (!datos.codigo) {
+          const maxNum = (_herListaActual || []).reduce((max, h) => {
+            const m = /^HER-(\d+)$/i.exec(h.codigo || "");
+            return m ? Math.max(max, parseInt(m[1], 10)) : max;
+          }, 0);
+          datos.codigo = "HER-" + String(maxNum + 1).padStart(3, "0");
+        }
         await addDoc(collection(db, "herramientas"), { ...datos, creadoEn: serverTimestamp() });
         mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramienta agregada');
         registrarAuditoria("herramienta", "crear", `Agregó la herramienta "${nombreFinal}"${categoria ? " ("+categoria+")" : ""}`);
