@@ -1058,7 +1058,17 @@ function actualizarContadores() {
 function cargarSelectores() {
   const sel = document.getElementById("filtro-profesor");
   sel.innerHTML = '<option value="">Todos los profesores</option>';
+  const llenarConRespaldo = () => {
+    const deSolicitudes = [...new Set(todasSolicitudes.map(s => s.profesor).filter(Boolean))];
+    const nombres = deSolicitudes.length > 0 ? deSolicitudes : PROFESORES_RESPALDO_ADMIN;
+    nombres.sort((a,b) => a.localeCompare(b)).forEach(p => {
+      const opt = document.createElement("option");
+      opt.value = p; opt.textContent = p;
+      sel.appendChild(opt);
+    });
+  };
   getDocs(collection(db, "profesores")).then(snap => {
+    if (snap.empty) { llenarConRespaldo(); return; }
     snap.docs
       .map(d => d.data())
       .filter(p => !p.eliminado && p.nombre)
@@ -1068,14 +1078,7 @@ function cargarSelectores() {
         opt.value = p.nombre; opt.textContent = p.nombre;
         sel.appendChild(opt);
       });
-  }).catch(() => {
-    const profesores = [...new Set(todasSolicitudes.map(s => s.profesor).filter(Boolean))];
-    profesores.forEach(p => {
-      const opt = document.createElement("option");
-      opt.value = p; opt.textContent = p;
-      sel.appendChild(opt);
-    });
-  });
+  }).catch(llenarConRespaldo);
 }
 
 function esMismodia(ts) {
