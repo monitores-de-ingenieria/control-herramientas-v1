@@ -3989,7 +3989,7 @@ window.abrirModalSalidaStock = function() {
   const lista = (_herListaActual || []).slice().sort((a,b) => a.nombre.localeCompare(b.nombre));
   sel.innerHTML = lista.map(h => `<option value="${h.id}">${escapeHtml(h.nombre)} (disponible: ${h.cantidadDisponible ?? 0})</option>`).join("");
   document.getElementById("salida-cantidad").value = 1;
-  document.getElementById("salida-motivo").value = "Uso interno";
+  document.getElementById("salida-motivo").value = "Tramo estudiantes";
   document.getElementById("salida-nota").value = "";
   salidaActualizarDisponible();
   document.getElementById("modal-salida-stock").classList.add("abierto");
