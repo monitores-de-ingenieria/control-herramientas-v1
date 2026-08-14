@@ -1180,7 +1180,7 @@ tr:hover td { background: var(--hover); }
 .her-chip:hover { transform: translateY(-1px); }
 #her-buscar { width: 100%; box-sizing: border-box; padding: 8px 34px 8px 12px; background: var(--card); border: 1px solid var(--borde); border-radius: 8px; color: var(--texto); font-size: 12px; min-width: 200px; }
 #her-buscar:focus { outline: none; border-color: var(--verde); }
-.her-buscar-wrap { flex-shrink: 0; width: 240px; transition: box-shadow .15s; border-radius: 8px; }
+.her-buscar-wrap { flex-shrink: 0; width: 240px; transition: box-shadow .15s; border-radius: 8px; margin-bottom: 6px; }
 .her-buscar-wrap.tiene-texto #her-buscar { border-color: var(--verde); background: var(--verde-glow); }
 .her-buscar-wrap.tiene-texto { box-shadow: 0 0 0 3px var(--verde-glow); }
 .buscar-limpiar {
