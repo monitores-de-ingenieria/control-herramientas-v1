@@ -2333,8 +2333,21 @@ window.limpiarFiltrosHerramientas = function() {
   const buscar = document.getElementById("her-buscar");
   if (buscar) buscar.value = "";
   herCategoriaActiva = "";
+  actualizarEstadoBuscadorHerramientas();
   renderHerramientasCfg(_herListaActual);
 };
+window.limpiarBusquedaHerramientas = function() {
+  const buscar = document.getElementById("her-buscar");
+  if (buscar) buscar.value = "";
+  actualizarEstadoBuscadorHerramientas();
+  renderHerramientasCfg(_herListaActual);
+  buscar?.focus();
+};
+function actualizarEstadoBuscadorHerramientas() {
+  const buscar = document.getElementById("her-buscar");
+  const wrap = document.getElementById("her-buscar-wrap");
+  if (wrap) wrap.classList.toggle("tiene-texto", !!buscar?.value);
+}
 
 const _herFotoMap = {};
 
@@ -3483,6 +3496,14 @@ function renderHerramientasCfg(lista) {
   ) : lista.slice();
   if (herCategoriaActiva) filtrada = filtrada.filter(h => (h.categoria || "Sin categoría") === herCategoriaActiva);
 
+  // ── Aviso de resultados junto al buscador (solo si hay texto escrito) ──
+  const resultadoWrap = document.getElementById("her-buscar-resultado");
+  if (resultadoWrap) {
+    resultadoWrap.innerHTML = buscar
+      ? `<i data-lucide="filter" style="width:1em;height:1em;vertical-align:-2px"></i> ${filtrada.length} resultado${filtrada.length === 1 ? '' : 's'} para "${escapeHtml(document.getElementById("her-buscar").value)}"`
+      : "";
+  }
+
   // ── Franja de estadísticas ──
   const statsWrap = document.getElementById("her-stats-strip");
   if (statsWrap) {
@@ -3996,7 +4017,7 @@ window.guardarEntradaStock = async function() {
   finally { btn.disabled = false; btn.textContent = "Registrar entrada"; }
 };
 
-document.getElementById("her-buscar")?.addEventListener("input", () => renderHerramientasCfg(_herListaActual));
+document.getElementById("her-buscar")?.addEventListener("input", () => { actualizarEstadoBuscadorHerramientas(); renderHerramientasCfg(_herListaActual); });
 
 document.getElementById("modal-entrada-stock")?.addEventListener("click", e => {
   if (e.target === document.getElementById("modal-entrada-stock")) cerrarModalEntradaStock();
