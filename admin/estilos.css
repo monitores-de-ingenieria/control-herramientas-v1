@@ -1175,7 +1175,7 @@ tr:hover td { background: var(--hover); }
 
 .her-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
 .her-toolbar.toolbar-tabla { margin-bottom: 0; }
-.her-categoria-chips { display: flex; gap: 6px; overflow-x: auto; flex: 1; min-width: 160px; padding-bottom: 3px; }
+.her-categoria-chips { display: flex; gap: 6px; overflow-x: auto; flex: 1; min-width: 160px; padding-bottom: 6px; }
 .her-chip { flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid var(--borde); background: var(--card); color: var(--texto-dim); white-space: nowrap; transition: transform .12s, border-color .15s; }
 .her-chip:hover { transform: translateY(-1px); }
 #her-buscar { width: 100%; box-sizing: border-box; padding: 8px 34px 8px 12px; background: var(--card); border: 1px solid var(--borde); border-radius: 8px; color: var(--texto); font-size: 12px; min-width: 200px; }
@@ -1414,6 +1414,18 @@ body.tema-claro #vista-herramientas-cfg .her-grid {
 /* Chips de categoría: pill redondeada, más "física", con su color real */
 #vista-herramientas-cfg .her-categoria-chips {
   gap: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--borde) transparent;
+}
+#vista-herramientas-cfg .her-categoria-chips::-webkit-scrollbar {
+  height: 5px;
+}
+#vista-herramientas-cfg .her-categoria-chips::-webkit-scrollbar-track {
+  background: transparent;
+}
+#vista-herramientas-cfg .her-categoria-chips::-webkit-scrollbar-thumb {
+  background: var(--borde);
+  border-radius: 10px;
 }
 #vista-herramientas-cfg .her-chip {
   border-radius: 20px;
