@@ -1414,9 +1414,18 @@ body.tema-claro #vista-herramientas-cfg .her-grid {
 /* Chips de categoría: pill redondeada, más "física", con su color real */
 #vista-herramientas-cfg .her-categoria-chips {
   gap: 8px;
-  overflow-x: visible;
-  flex-wrap: wrap;
-  min-width: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--borde) transparent;
+}
+#vista-herramientas-cfg .her-categoria-chips::-webkit-scrollbar {
+  height: 5px;
+}
+#vista-herramientas-cfg .her-categoria-chips::-webkit-scrollbar-track {
+  background: transparent;
+}
+#vista-herramientas-cfg .her-categoria-chips::-webkit-scrollbar-thumb {
+  background: var(--borde);
+  border-radius: 10px;
 }
 #vista-herramientas-cfg .her-chip {
   border-radius: 20px;
