@@ -3640,6 +3640,13 @@ window.abrirModalHerramienta = function(id = null, nombre = "", cantidad = 1, es
   // de referencia — así el próximo "Guardar" repara el documento solo.
   const refLista = HERRAMIENTAS_LISTA.find(h => h.nombre.toLowerCase() === nombre.toLowerCase());
   herCfgCodigoLocal = datosActuales?.codigo || refLista?.codigo || null;
+  // Herramienta nueva de verdad (no edición, no una del catálogo de
+  // respaldo que ya trae su propio código): precarga el siguiente código
+  // disponible, editable, para poder nombrar la foto en GitHub con ese
+  // mismo código antes de guardar.
+  if (!herCfgCodigoLocal && !id && !esLocal) {
+    herCfgCodigoLocal = siguienteCodigoHerramienta();
+  }
   herCfgIconoLocal  = datosActuales?.icono  || refLista?.icono  || null;
   herIconoLimpiarFlag = false;
   mostrarPreviewIconoHer();
@@ -3795,6 +3802,19 @@ function comprimirFoto(archivo, prefijo = "her") {
 }
 function herComprimirFoto(archivo) { return comprimirFoto(archivo, "her"); }
 
+// Calcula el siguiente código HER-0XX disponible, según el número más alto
+// que ya exista en la lista cargada. Se usa tanto para precargar el campo
+// "Código" al abrir "Agregar herramienta nueva" (para poder nombrar la foto
+// en GitHub con ese mismo código antes de guardar) como de respaldo al
+// guardar, por si el campo llegara vacío por cualquier otro motivo.
+function siguienteCodigoHerramienta() {
+  const maxNum = (_herListaActual || []).reduce((max, h) => {
+    const m = /^HER-(\d+)$/i.exec(h.codigo || "");
+    return m ? Math.max(max, parseInt(m[1], 10)) : max;
+  }, 0);
+  return "HER-" + String(maxNum + 1).padStart(3, "0");
+}
+
 window.guardarHerramienta = async function() {
   const nombre    = document.getElementById("her-input-nombre").value.trim();
   const categoria = document.getElementById("her-input-categoria").value;
@@ -3873,11 +3893,7 @@ window.guardarHerramienta = async function() {
         registrarAuditoria("herramienta", "editar", `Editó la herramienta "${nombreFinal}"${describirCambios(antesExistente)}`);
       } else {
         if (!datos.codigo) {
-          const maxNum = (_herListaActual || []).reduce((max, h) => {
-            const m = /^HER-(\d+)$/i.exec(h.codigo || "");
-            return m ? Math.max(max, parseInt(m[1], 10)) : max;
-          }, 0);
-          datos.codigo = "HER-" + String(maxNum + 1).padStart(3, "0");
+          datos.codigo = siguienteCodigoHerramienta();
         }
         await addDoc(collection(db, "herramientas"), { ...datos, creadoEn: serverTimestamp() });
         mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramienta agregada');
