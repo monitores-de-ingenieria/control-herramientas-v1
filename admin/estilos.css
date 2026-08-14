@@ -874,7 +874,8 @@ tr:hover td { background: var(--hover); }
 .btn:active { transform: scale(.97); }
 .btn-verde { background: var(--gradiente-verde); color: #fff; box-shadow: var(--sombra-verde); border-color: transparent; }
 .btn-verde:hover { box-shadow: 0 10px 22px rgba(34,197,94,0.3); color: #fff; filter: brightness(1.03); }
-.btn, .btn:focus, .btn:active, .btn:hover { outline: none !important; }
+.btn:focus-visible { outline: 2px solid var(--verde); outline-offset: 2px; }
+.btn:focus:not(:focus-visible) { outline: none; }
 .btn-outline { background: var(--card2); border: 1px solid var(--borde); color: var(--texto-dim); font-weight: 700; }
 .btn-outline:hover { border-color: var(--verde); color: var(--verde); background: var(--verde-glow); }
 .modal-acciones .btn { border-radius: 999px; padding: 8px 16px; }
@@ -1172,7 +1173,6 @@ tr:hover td { background: var(--hover); }
 .her-stat-pill .her-stat-num { font-size: 17px; font-weight: 700; line-height: 1.2; color: var(--texto); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
 .her-stat-pill .her-stat-label { font-size: 9.5px; color: var(--texto-dim); text-transform: uppercase; letter-spacing: .04em; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.her-buscar-wrap-fuera { display: flex; justify-content: flex-end; margin-bottom: 10px; }
 .her-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
 .her-toolbar.toolbar-tabla { margin-bottom: 0; }
 .her-categoria-chips { display: flex; gap: 6px; overflow-x: auto; flex: 1; min-width: 160px; padding-bottom: 6px; }
