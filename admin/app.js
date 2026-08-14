@@ -3477,7 +3477,10 @@ function renderHerramientasCfg(lista) {
 
   // ── Filtro por texto + categoría activa ──
   const buscar = (document.getElementById("her-buscar")?.value || "").toLowerCase();
-  let filtrada = buscar ? lista.filter(h => h.nombre.toLowerCase().includes(buscar)) : lista.slice();
+  let filtrada = buscar ? lista.filter(h =>
+    h.nombre.toLowerCase().includes(buscar) ||
+    (h.codigo || "").toLowerCase().includes(buscar)
+  ) : lista.slice();
   if (herCategoriaActiva) filtrada = filtrada.filter(h => (h.categoria || "Sin categoría") === herCategoriaActiva);
 
   // ── Franja de estadísticas ──
@@ -3562,6 +3565,7 @@ function renderHerramientasCfg(lista) {
         </div>
         <div class="her-cuerpo">
           <div class="her-nombre">${escapeHtml(h.nombre)}${local}</div>
+          ${h.codigo ? `<div class="her-codigo" style="font-size:10px;font-family:monospace;color:var(--texto-dim);margin-bottom:6px">${escapeHtml(h.codigo)}</div>` : ''}
           ${h.usoInterno ? `<div style="font-size:10px;color:#fbbf24;font-weight:700;margin-bottom:4px">🔒 Uso interno — no visible para estudiantes</div>` : ''}
           ${h.practica ? `<div style="font-size:10px;color:var(--verde);font-weight:700;margin-bottom:6px"><i data-lucide="tag" style="width:1em;height:1em;vertical-align:-2px"></i> ${h.practica}</div>` : ''}
           <div class="her-fila-stock">

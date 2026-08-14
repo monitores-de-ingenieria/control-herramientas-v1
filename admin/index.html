@@ -507,7 +507,7 @@
 
         <div class="her-toolbar">
           <div class="her-categoria-chips" id="her-chips"></div>
-          <div class="buscar-wrap"><span class="buscar-icono"><i data-lucide=search style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span><input type="text" id="her-buscar" placeholder="Buscar herramienta..."></div>
+          <div class="buscar-wrap"><span class="buscar-icono"><i data-lucide=search style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span><input type="text" id="her-buscar" placeholder="Buscar por nombre o código..."></div>
         </div>
 
         <div id="her-cfg-wrap" class="her-grid">
@@ -1362,6 +1362,7 @@
       <span id="her-modal-titulo"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar herramienta</span>
       <button class="modal-cerrar" onclick="cerrarModalHerramienta()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
     </div>
+    <div class="modal-cuerpo">
     <div class="modal-campo">
       <label>Nombre</label>
       <input type="text" id="her-input-nombre" placeholder="Ej: Martillo"
@@ -1446,6 +1447,7 @@
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalHerramienta()">Cancelar</button>
       <button class="btn btn-verde" id="her-btn-guardar" onclick="guardarHerramienta()"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Guardar</button>
+    </div>
     </div>
   </div>
 </div>
