@@ -3834,7 +3834,7 @@ window.guardarHerramienta = async function() {
   const codigoFinal = codigoInput || herCfgCodigoLocal;
   if (codigoFinal) {
     if (!/^HER-\d{3,}$/i.test(codigoFinal)) {
-      mostrarToast('El código debe tener el formato HER-0XX (ej. HER-041)', "rojo");
+      await confirmarPersonalizado('El código debe tener el formato HER-0XX (ej. HER-041).', true);
       btn.disabled = false; btn.textContent = "Guardar";
       return;
     }
@@ -3842,7 +3842,7 @@ window.guardarHerramienta = async function() {
       h.id !== herCfgEditar && (h.codigo || "").toLowerCase() === codigoFinal.toLowerCase()
     );
     if (repetido) {
-      mostrarToast(`El código "${codigoFinal}" ya lo usa "${repetido.nombre}" — elige otro`, "rojo");
+      await confirmarPersonalizado(`El código "${codigoFinal}" ya lo usa "${repetido.nombre}" — elige otro.`, true);
       btn.disabled = false; btn.textContent = "Guardar";
       return;
     }
