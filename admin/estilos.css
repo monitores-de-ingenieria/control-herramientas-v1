@@ -874,8 +874,7 @@ tr:hover td { background: var(--hover); }
 .btn:active { transform: scale(.97); }
 .btn-verde { background: var(--gradiente-verde); color: #fff; box-shadow: var(--sombra-verde); border-color: transparent; }
 .btn-verde:hover { box-shadow: 0 10px 22px rgba(34,197,94,0.3); color: #fff; filter: brightness(1.03); }
-.btn:focus-visible { outline: 2px solid var(--verde); outline-offset: 2px; }
-.btn:focus:not(:focus-visible) { outline: none; }
+.btn, .btn:focus, .btn:active, .btn:hover { outline: none !important; }
 .btn-outline { background: var(--card2); border: 1px solid var(--borde); color: var(--texto-dim); font-weight: 700; }
 .btn-outline:hover { border-color: var(--verde); color: var(--verde); background: var(--verde-glow); }
 .modal-acciones .btn { border-radius: 999px; padding: 8px 16px; }
