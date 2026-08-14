@@ -1373,7 +1373,7 @@
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
     </div>
     <div class="modal-campo">
-      <label>Categoría</label>
+      <label style="display:flex;align-items:center;gap:6px">Categoría <span class="campo-ayuda" title="Elige 'Material Gastable' para ítems que se consumen en la práctica (electrodos, cinta, etc.) — aparecerán con etiqueta especial en los retornos"><i data-lucide=info></i></span></label>
       <select id="her-input-categoria"
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
         <option value="">Sin categoría</option>
@@ -1388,7 +1388,6 @@
         <option value="Insumos"><i data-lucide=droplet style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Insumos</option>
         <option value="Material Gastable"><i data-lucide=briefcase style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Material Gastable</option>
       </select>
-      <small style="color:var(--texto-dim);font-size:11px">Marca "Material Gastable" para ítems que se consumen en la práctica (aparecerán con etiqueta especial en retornos)</small>
     </div>
     <div class="modal-campo">
       <label>Código <span style="color:var(--texto-dim);font-weight:400">(nombre del archivo en img/herramientas/ — viene precargado con el siguiente disponible; si lo cambias, debe seguir el formato HER-0XX y no repetir el de otra herramienta)</span></label>
