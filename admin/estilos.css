@@ -1837,3 +1837,7 @@ body.tema-claro #vista-herramientas-cfg .her-grid {
 /* Graficos de barras / area */
 .skel-barras-wrap { display: flex; align-items: flex-end; gap: 8px; height: 120px; }
 .skel-barras-wrap .skel-bar { flex: 1; border-radius: 6px 6px 0 0; }
+
+.campo-ayuda { display: inline-flex; align-items: center; cursor: help; color: var(--texto-dim); flex-shrink: 0; }
+.campo-ayuda:hover { color: var(--verde); }
+.campo-ayuda i { width: 14px; height: 14px; }

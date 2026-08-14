@@ -1287,17 +1287,16 @@
         <div id="entrada-foto-exito" style="display:none;margin-top:6px;font-size:12px;color:var(--verde);font-weight:700"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Foto cargada correctamente</div>
       </div>
       <div class="modal-campo">
-        <label>Límite por estudiante, por solicitud</label>
+        <label style="display:flex;align-items:center;gap:6px">Límite por estudiante, por solicitud <span class="campo-ayuda" title="Normalmente un estudiante solo puede marcar 1 unidad de cada herramienta. Sube este número para materiales gastables (electrodos, cinta, etc.)"><i data-lucide=info></i></span></label>
         <input type="number" id="entrada-input-limite-estudiante" min="1" placeholder="Vacío = 1 (por defecto)"
           style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
-        <small style="color:var(--texto-dim);font-size:11px">Normalmente un estudiante solo puede marcar 1 unidad de cada herramienta. Sube este número para materiales gastables (electrodos, cinta, etc.)</small>
       </div>
       <div class="modal-campo">
         <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
           <input type="checkbox" id="entrada-input-uso-interno" style="width:16px;height:16px;accent-color:var(--verde);cursor:pointer">
-          <span>🔒 Uso interno del taller (no para estudiantes)</span>
+          <span>Uso interno del taller (no para estudiantes)</span>
+          <span class="campo-ayuda" title="Para herramientas propias del taller que solo se prestan a profesores/departamentos. No aparecerá en el formulario público del estudiante."><i data-lucide=info></i></span>
         </label>
-        <small style="color:var(--texto-dim);font-size:11px">Para herramientas propias del taller que solo se prestan a profesores/departamentos. No aparecerá en el formulario público del estudiante.</small>
       </div>
       <button type="button" class="btn btn-outline" onclick="toggleEntradaNueva(false)" style="width:100%;margin-bottom:14px;font-size:12.5px" title="Cambiar a modo: elegir una herramienta ya existente"><i data-lucide=arrow-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Ya existe, elegir de la lista</button>
     </div>
@@ -1430,24 +1429,22 @@
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
     </div>
     <div class="modal-campo">
-      <label>Límite por estudiante, por solicitud</label>
+      <label style="display:flex;align-items:center;gap:6px">Límite por estudiante, por solicitud <span class="campo-ayuda" title="Normalmente un estudiante solo puede marcar 1 unidad de cada herramienta (nadie necesita 2 martillos). Sube este número para materiales gastables como electrodos, cinta, etc."><i data-lucide=info></i></span></label>
       <input type="number" id="her-input-limite-estudiante" min="1" placeholder="Vacío = 1 (por defecto)"
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
-      <small style="color:var(--texto-dim);font-size:11px">Normalmente un estudiante solo puede marcar 1 unidad de cada herramienta (nadie necesita 2 martillos). Sube este número para materiales gastables como electrodos, cinta, etc.</small>
     </div>
     <div class="modal-campo">
-      <label>Práctica / combo (ej: Soldadura)</label>
+      <label style="display:flex;align-items:center;gap:6px">Práctica / combo (ej: Soldadura) <span class="campo-ayuda" title="Agrupa herramientas de distintas categorías que siempre se piden juntas para una práctica — el estudiante verá un botón Agregar combo completo"><i data-lucide=info></i></span></label>
       <input type="text" id="her-input-practica" list="her-practica-lista" placeholder="Dejar vacío = sin agrupar"
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
       <datalist id="her-practica-lista"></datalist>
-      <small style="color:var(--texto-dim);font-size:11px">Agrupa herramientas de distintas categorías que siempre se piden juntas para una práctica — el estudiante verá un botón "Agregar combo completo"</small>
     </div>
     <div class="modal-campo">
       <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
         <input type="checkbox" id="her-input-uso-interno" style="width:16px;height:16px;accent-color:var(--verde);cursor:pointer">
-        <span>🔒 Uso interno del taller (no para estudiantes)</span>
+        <span>Uso interno del taller (no para estudiantes)</span>
+        <span class="campo-ayuda" title="Para herramientas propias del taller que solo se prestan a profesores/departamentos por Herramientas Prestadas o Préstamos a Profesores. Márcala y no aparecerá disponible en el formulario público del estudiante."><i data-lucide=info></i></span>
       </label>
-      <small style="color:var(--texto-dim);font-size:11px">Para herramientas propias del taller que solo se prestan a profesores/departamentos por "Herramientas Prestadas" o "Préstamos a Profesores". Márcala y no aparecerá disponible en el formulario público del estudiante.</small>
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalHerramienta()">Cancelar</button>
