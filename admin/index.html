@@ -1287,7 +1287,7 @@
         <div id="entrada-foto-exito" style="display:none;margin-top:6px;font-size:12px;color:var(--verde);font-weight:700"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Foto cargada correctamente</div>
       </div>
       <div class="modal-campo">
-        <label style="display:flex;align-items:center;gap:6px">Límite por estudiante, por solicitud <span class="campo-ayuda" title="Normalmente un estudiante solo puede marcar 1 unidad de cada herramienta. Sube este número para materiales gastables (electrodos, cinta, etc.)"><i data-lucide=info></i></span></label>
+        <label style="display:flex;align-items:center;gap:6px">Límite por estudiante, por solicitud <span class="campo-ayuda" title="Normalmente un estudiante solo puede marcar 1 unidad de cada herramienta. Sube este número para materiales gastables (electrodos)"><i data-lucide=info></i></span></label>
         <input type="number" id="entrada-input-limite-estudiante" min="1" placeholder="Vacío = 1 (por defecto)"
           style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
       </div>
@@ -1390,7 +1390,7 @@
       </select>
     </div>
     <div class="modal-campo">
-      <label>Código <span style="color:var(--texto-dim);font-weight:400">(nombre del archivo en img/herramientas/ — viene precargado con el siguiente disponible; si lo cambias, debe seguir el formato HER-0XX y no repetir el de otra herramienta)</span></label>
+      <label style="display:flex;align-items:center;gap:6px">Código <span class="campo-ayuda" title="Nombre del archivo en img/herramientas/. Viene precargado con el siguiente disponible; si lo cambias, debe seguir el formato HER-0XX y no repetir el de otra herramienta"><i data-lucide=info></i></span></label>
       <input type="text" id="her-input-codigo" placeholder="Ej: HER-040"
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
     </div>
@@ -1428,7 +1428,7 @@
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
     </div>
     <div class="modal-campo">
-      <label style="display:flex;align-items:center;gap:6px">Límite por estudiante, por solicitud <span class="campo-ayuda" title="Normalmente un estudiante solo puede marcar 1 unidad de cada herramienta (nadie necesita 2 martillos). Sube este número para materiales gastables como electrodos, cinta, etc."><i data-lucide=info></i></span></label>
+      <label style="display:flex;align-items:center;gap:6px">Límite por estudiante, por solicitud <span class="campo-ayuda" title="Normalmente un estudiante solo puede marcar 1 unidad de cada herramienta (nadie necesita 2 martillos). Sube este número para materiales gastables como electrodos"><i data-lucide=info></i></span></label>
       <input type="number" id="her-input-limite-estudiante" min="1" placeholder="Vacío = 1 (por defecto)"
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
     </div>
