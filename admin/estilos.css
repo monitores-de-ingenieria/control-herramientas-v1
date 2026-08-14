@@ -1172,6 +1172,7 @@ tr:hover td { background: var(--hover); }
 .her-stat-pill .her-stat-num { font-size: 17px; font-weight: 700; line-height: 1.2; color: var(--texto); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
 .her-stat-pill .her-stat-label { font-size: 9.5px; color: var(--texto-dim); text-transform: uppercase; letter-spacing: .04em; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+.her-buscar-wrap-fuera { display: flex; justify-content: flex-end; margin-bottom: 10px; }
 .her-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
 .her-toolbar.toolbar-tabla { margin-bottom: 0; }
 .her-categoria-chips { display: flex; gap: 6px; overflow-x: auto; flex: 1; min-width: 160px; padding-bottom: 6px; }
