@@ -3832,7 +3832,22 @@ window.guardarHerramienta = async function() {
   // Si el usuario escribió algo, usa eso. Si lo dejó vacío, conserva el código
   // que ya tenía (respaldo/edición) para no perderlo por accidente.
   const codigoFinal = codigoInput || herCfgCodigoLocal;
-  if (codigoFinal) datos.codigo = codigoFinal;
+  if (codigoFinal) {
+    if (!/^HER-\d{3,}$/i.test(codigoFinal)) {
+      mostrarToast('El código debe tener el formato HER-0XX (ej. HER-041)', "rojo");
+      btn.disabled = false; btn.textContent = "Guardar";
+      return;
+    }
+    const repetido = (_herListaActual || []).find(h =>
+      h.id !== herCfgEditar && (h.codigo || "").toLowerCase() === codigoFinal.toLowerCase()
+    );
+    if (repetido) {
+      mostrarToast(`El código "${codigoFinal}" ya lo usa "${repetido.nombre}" — elige otro`, "rojo");
+      btn.disabled = false; btn.textContent = "Guardar";
+      return;
+    }
+    datos.codigo = codigoFinal;
+  }
   if (herIconoLimpiarFlag) {
     datos.icono = null; // fuerza a Firestore a borrar el valor viejo (roto)
   } else if (herCfgIconoLocal) {
