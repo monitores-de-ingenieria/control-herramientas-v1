@@ -971,6 +971,17 @@ async function _actualizarDashboard(todas, prestProf) {
       if (cardInc) cardInc.classList.toggle("rojo", totalIncAbiertas > 0);
       if (cardInc) cardInc.classList.toggle("gris", totalIncAbiertas === 0);
       set("dash-incidencias-sub", totalIncAbiertas ? "necesitan revisión" : "todo resuelto");
+
+      const subEl = document.getElementById("dash-subtitulo-estado");
+      if (subEl) {
+        if (totalIncAbiertas) {
+          subEl.textContent = `${totalIncAbiertas} incidencia${totalIncAbiertas===1?"":"s"} necesita${totalIncAbiertas===1?"":"n"} tu revisión`;
+        } else if (pendHoy) {
+          subEl.textContent = `${pendHoy} solicitud${pendHoy===1?"":"es"} esperando entrega`;
+        } else {
+          subEl.textContent = "Todo está bajo control";
+        }
+      }
     }
     set("res-total", deHoy.length);
     actualizarBadgeLateral("badge-incidencias", incidencias + incidenciasProf);
