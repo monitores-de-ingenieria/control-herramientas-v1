@@ -2329,6 +2329,11 @@ const CATEGORIAS_HERRAMIENTA = {
 // A partir de esta cantidad disponible (inclusive) se marca "stock bajo".
 const UMBRAL_STOCK_BAJO = 2;
 let herCategoriaActiva = "";
+// Bandera compartida: true justo después de un arrastre real sobre los
+// chips, para que el propio click listener de cada chip (más abajo, en
+// renderHerramientasCfg) lo ignore y no seleccione una categoría por
+// accidente al soltar el mouse tras deslizar.
+let _chipsArrastroReciente = false;
 // Los chips de categoría (#her-chips) solo se pueden desplazar por defecto
 // con Shift+rueda o las flechas del teclado (con foco), que no es intuitivo
 // para la mayoría. Esto agrega: (1) la rueda normal del mouse también mueve
@@ -2346,26 +2351,30 @@ let herCategoriaActiva = "";
     el.scrollLeft += e.deltaY;
   }, { passive: false });
 
-  let arrastrando = false, inicioX = 0, inicioScroll = 0, seMovio = false;
+  let arrastrando = false, inicioX = 0, inicioScroll = 0;
   el.addEventListener("mousedown", (e) => {
-    arrastrando = true; seMovio = false;
+    arrastrando = true;
     el.classList.add("chips-arrastrando");
     inicioX = e.pageX;
     inicioScroll = el.scrollLeft;
   });
-  window.addEventListener("mouseup", () => { arrastrando = false; el.classList.remove("chips-arrastrando"); });
+  window.addEventListener("mouseup", () => {
+    if (arrastrando) setTimeout(() => { _chipsArrastroReciente = false; }, 0);
+    arrastrando = false;
+    el.classList.remove("chips-arrastrando");
+  });
   window.addEventListener("mousemove", (e) => {
     if (!arrastrando) return;
-    e.preventDefault();
     const distancia = e.pageX - inicioX;
-    if (Math.abs(distancia) > 4) seMovio = true; // umbral para no confundir un clic normal con un arrastre
-    el.scrollLeft = inicioScroll - distancia;
+    // Umbral generoso (8px) para no confundir un clic normal -- sobre todo
+    // en trackpad, donde un clic simple casi siempre trae algo de movimiento
+    // -- con un arrastre real para desplazar los chips.
+    if (Math.abs(distancia) > 8) {
+      _chipsArrastroReciente = true;
+      e.preventDefault();
+      el.scrollLeft = inicioScroll - distancia;
+    }
   });
-  // Si hubo arrastre real, se cancela el clic del chip para no seleccionar
-  // una categoría por accidente al soltar el mouse tras deslizar.
-  el.addEventListener("click", (e) => {
-    if (seMovio) { e.stopPropagation(); e.preventDefault(); }
-  }, true);
 })();
 
 window.limpiarFiltrosHerramientas = function() {
@@ -3521,6 +3530,7 @@ function renderHerramientasCfg(lista) {
     chipsWrap.innerHTML = chipsHtml;
     chipsWrap.querySelectorAll(".her-chip").forEach(chip => {
       chip.addEventListener("click", () => {
+        if (_chipsArrastroReciente) return; // fue un arrastre, no una selección real
         herCategoriaActiva = chip.dataset.cat;
         renderHerramientasCfg(_herListaActual);
       });
