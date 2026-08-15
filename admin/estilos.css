@@ -1175,12 +1175,21 @@ tr:hover td { background: var(--hover); }
 
 .her-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
 .her-toolbar.toolbar-tabla { margin-bottom: 0; }
-.her-categoria-chips { display: flex; gap: 6px; overflow-x: auto; flex: 1; min-width: 160px; padding-bottom: 6px; }
+.her-categoria-chips {
+  display: flex; gap: 6px; overflow-x: auto; flex: 1; min-width: 160px;
+  /* El scroll sigue funcionando (arrastrando o con la rueda del mouse);
+     solo se oculta la barra visual, porque su alto variaba según el
+     navegador/SO y descuadraba la alineación vertical con el buscador
+     de al lado (que no tiene scroll y por lo tanto no tenía esa altura extra). */
+  scrollbar-width: none;      /* Firefox */
+  -ms-overflow-style: none;   /* Edge/IE viejo */
+}
+.her-categoria-chips::-webkit-scrollbar { display: none; } /* Chrome/Safari/Edge nuevo */
 .her-chip { flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid var(--borde); background: var(--card); color: var(--texto-dim); white-space: nowrap; transition: transform .12s, border-color .15s; }
 .her-chip:hover { transform: translateY(-1px); }
 #her-buscar { width: 100%; box-sizing: border-box; padding: 8px 34px 8px 12px; background: var(--card); border: 1px solid var(--borde); border-radius: 8px; color: var(--texto); font-size: 12px; min-width: 200px; }
 #her-buscar:focus { outline: none; border-color: var(--verde); }
-.her-buscar-wrap { flex-shrink: 0; width: 240px; transition: box-shadow .15s; border-radius: 8px; margin-bottom: 6px; }
+.her-buscar-wrap { flex-shrink: 0; width: 240px; transition: box-shadow .15s; border-radius: 8px; }
 .her-buscar-wrap.tiene-texto #her-buscar { border-color: var(--verde); background: var(--verde-glow); }
 .her-buscar-wrap.tiene-texto { box-shadow: 0 0 0 3px var(--verde-glow); }
 .buscar-limpiar {
