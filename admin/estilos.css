@@ -553,6 +553,36 @@ body:not(.tema-claro) .switch-tema-icono-luna { opacity: 1; }
   gap: 12px;
   margin-bottom: 18px;
 }
+
+.kpi-hero {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: linear-gradient(135deg, var(--verde-glow), var(--card) 70%);
+  border: 1px solid var(--borde);
+  border-left: 4px solid var(--amarillo);
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin-bottom: 14px;
+  cursor: pointer;
+  box-shadow: var(--sombra-sm);
+  transition: transform .15s cubic-bezier(.16,1,.3,1), box-shadow .15s;
+}
+.kpi-hero:hover { transform: translateY(-2px); box-shadow: var(--sombra-md); }
+.kpi-hero-icono {
+  width: 56px; height: 56px; border-radius: 14px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; background: rgba(234,179,8,0.14); color: var(--amarillo);
+}
+.kpi-hero-texto { flex: 1; min-width: 0; }
+.kpi-hero-label { font-size: 11px; font-weight: 700; color: var(--texto-dim); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 2px; }
+.kpi-hero-numero { font-size: 44px; font-weight: 800; line-height: 1; letter-spacing: -1px; color: var(--texto); }
+.kpi-hero-insight { font-size: 12.5px; color: var(--texto-dim); margin-top: 6px; }
+.kpi-hero-trend { font-size: 11px; color: var(--texto-dim); text-align: right; flex-shrink: 0; }
+@media (max-width: 640px) {
+  .kpi-hero { flex-wrap: wrap; }
+  .kpi-hero-numero { font-size: 34px; }
+}
 .kpi-card {
   background: var(--card);
   border: 1px solid var(--borde);

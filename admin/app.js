@@ -596,7 +596,7 @@ function navegarVista(vista) {
   ocultarPanelIncidenciasProf();
 }
 
-document.querySelectorAll(".kpi-card[data-vista], #dash-kpis .her-stat-pill[data-vista]").forEach(card => {
+document.querySelectorAll(".kpi-card[data-vista], .kpi-hero[data-vista], #dash-kpis .her-stat-pill[data-vista]").forEach(card => {
   card.addEventListener("click", () => {
     navegarVista(card.dataset.vista);
     const estado = card.dataset.estado;
@@ -892,6 +892,7 @@ async function _actualizarDashboard(todas, prestProf) {
     const deAyer      = todas.filter(s => esMismoDiaQue(s.creadoEn, ayerRef));
     const prestProfHoy = prestProf.filter(p => esMismodia(p.creadoEn));
     const pendHoy    = deHoy.filter(s => s.estado === "pendiente").length;
+    const pendientesHoyLista = deHoy.filter(s => s.estado === "pendiente");
     const entregHoy  = deHoy.filter(s => s.estado === "entregada").length;
     const retHoy     = deHoy.filter(s => s.estado === "retornada").length;
     const cancHoy    = deHoy.filter(s => s.estado === "cancelada").length;
@@ -906,6 +907,24 @@ async function _actualizarDashboard(todas, prestProf) {
 
     const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
     set("res-pendientes", pendHoy);
+    {
+      const insightEl = document.getElementById("kpi-hero-insight");
+      if (insightEl) {
+        if (!pendHoy) {
+          insightEl.textContent = "Ninguna esperando — todo al día.";
+        } else {
+          const masAntigua = pendientesHoyLista.reduce((min, s) => {
+            const f = s.creadoEn?.toDate ? s.creadoEn.toDate() : new Date(s.creadoEn || 0);
+            return (!min || f < min) ? f : min;
+          }, null);
+          const minutos = masAntigua ? Math.round((Date.now() - masAntigua.getTime()) / 60000) : 0;
+          const tiempo = minutos < 60 ? `${minutos} min` : `${Math.round(minutos/60)}h`;
+          insightEl.textContent = pendHoy === 1
+            ? `Esperando desde hace ${tiempo}.`
+            : `La más antigua espera desde hace ${tiempo}.`;
+        }
+      }
+    }
     set("res-prestadas",  entregHoy);
     set("res-hoy",        retHoy);
     set("res-afuera",     herramientasAfuera);
