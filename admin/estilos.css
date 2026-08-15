@@ -649,7 +649,10 @@ body:not(.tema-claro) .switch-tema-icono-luna { opacity: 1; }
   position: relative;
   transition: border-color .2s, box-shadow .2s;
 }
-.dash-panel::before { content: none; }
+.dash-panel::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--borde); }
+.dash-panel--solicitudes::before  { background: #10b981; } /* mismo esmeralda del módulo Solicitudes */
+.dash-panel--herramientas::before { background: #f59e0b; } /* mismo ámbar del módulo Herramientas */
+.dash-panel--auditoria::before    { background: #6366f1; } /* mismo índigo del módulo Auditoría */
 .dash-panel:hover { border-color: var(--borde); box-shadow: var(--sombra-md); }
 
 .audit-linea { position: relative; }
