@@ -687,11 +687,32 @@ actualizarReloj();
 setInterval(actualizarReloj, 30000);
 
 // ── GRÁFICOS DASHBOARD ──
+function animarNumero(el, valorFinal) {
+  const inicio = parseInt(el.textContent, 10) || 0;
+  if (inicio === valorFinal) { el.textContent = valorFinal; return; }
+  const duracion = 500;
+  const t0 = performance.now();
+  function paso(t) {
+    const frac = Math.min(1, (t - t0) / duracion);
+    const facil = 1 - Math.pow(1 - frac, 3); // ease-out cúbico
+    el.textContent = Math.round(inicio + (valorFinal - inicio) * facil);
+    if (frac < 1) requestAnimationFrame(paso);
+    else el.textContent = valorFinal;
+  }
+  requestAnimationFrame(paso);
+}
+
 function barraH(valor, max, color) {
   const pct = max > 0 ? Math.round((valor / max) * 100) : 0;
   return `<div style="flex:1;background:var(--borde);border-radius:4px;height:8px;overflow:hidden">
-    <div style="width:${pct}%;height:100%;background:${color};border-radius:4px;transition:width .5s ease"></div>
+    <div class="barra-animada" data-pct="${pct}" style="width:0%;height:100%;background:${color};border-radius:4px;transition:width .6s cubic-bezier(.16,1,.3,1)"></div>
   </div>`;
+}
+
+function animarBarras(el) {
+  requestAnimationFrame(() => {
+    el.querySelectorAll(".barra-animada").forEach(b => { b.style.width = b.dataset.pct + "%"; });
+  });
 }
 
 function renderGraficoBarras(contenedorId, datos, color) {
@@ -700,11 +721,12 @@ function renderGraficoBarras(contenedorId, datos, color) {
   if (!datos.length) { el.innerHTML = vacioHTML({ icono: "bar-chart-3", titulo: "Sin datos aún", texto: "La actividad de hoy aparecerá aquí en cuanto haya movimientos." }); return; }
   const max = datos[0].valor;
   el.innerHTML = datos.slice(0, 8).map(d => `
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;cursor:pointer" onclick="dashAbrirHerramienta('${escapeAttr(d.etiqueta)}')">
+    <div class="fila-barra" style="display:flex;align-items:center;gap:8px;margin-bottom:9px;cursor:pointer;padding:3px 6px;margin-left:-6px;margin-right:-6px;border-radius:6px" onclick="dashAbrirHerramienta('${escapeAttr(d.etiqueta)}')">
       <div style="width:120px;font-size:11px;color:var(--texto);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${d.etiqueta}">${d.etiqueta}</div>
       ${barraH(d.valor, max, color)}
       <div style="width:26px;text-align:right;font-size:11px;font-weight:800;color:${color}">${d.valor}</div>
     </div>`).join("");
+  animarBarras(el);
 }
 
 function renderGraficoDonut(contenedorId, datos, onClickPrefix) {
@@ -908,7 +930,12 @@ async function _actualizarDashboard(todas, prestProf) {
       deHoy.filter(s => s.estado === "entregada").map(s => s.matricula || s.nombre)
     ).size;
 
-    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    const set = (id, val) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (typeof val === "number" && Number.isFinite(val)) animarNumero(el, val);
+      else el.textContent = val;
+    };
     set("res-pendientes", pendHoy);
     {
       const insightEl = document.getElementById("kpi-hero-insight");
