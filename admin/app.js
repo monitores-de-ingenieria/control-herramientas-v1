@@ -904,6 +904,9 @@ async function _actualizarDashboard(todas, prestProf) {
     const profActivosHoy = new Set(prestProfHoy.filter(p => p.estado === "activo").map(p => p.profesor)).size;
     const herramientasAfuera = deHoy.filter(s => s.estado === "entregada")
       .reduce((sum, s) => sum + (s.herramientas||[]).reduce((a,h) => a + (h.cantidad||1), 0), 0);
+    const estudiantesConHerramientasFuera = new Set(
+      deHoy.filter(s => s.estado === "entregada").map(s => s.matricula || s.nombre)
+    ).size;
 
     const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
     set("res-pendientes", pendHoy);
@@ -928,6 +931,9 @@ async function _actualizarDashboard(todas, prestProf) {
     set("res-prestadas",  entregHoy);
     set("res-hoy",        retHoy);
     set("res-afuera",     herramientasAfuera);
+    set("res-afuera-sub", herramientasAfuera
+      ? `en manos de ${estudiantesConHerramientasFuera} estudiante${estudiantesConHerramientasFuera===1?"":"s"}`
+      : "nada prestado hoy todavía");
     set("res-prof-activos", profActivosHoy);
     set("badge-pendientes", pendHoy);
     set("dash-incidencias",  incidencias + incidenciasProf);
@@ -937,6 +943,7 @@ async function _actualizarDashboard(todas, prestProf) {
       const cardInc = document.getElementById("dash-kpi-incidencias");
       if (cardInc) cardInc.classList.toggle("rojo", totalIncAbiertas > 0);
       if (cardInc) cardInc.classList.toggle("gris", totalIncAbiertas === 0);
+      set("dash-incidencias-sub", totalIncAbiertas ? "necesitan revisión" : "todo resuelto");
     }
     set("res-total", deHoy.length);
     actualizarBadgeLateral("badge-incidencias", incidencias + incidenciasProf);
