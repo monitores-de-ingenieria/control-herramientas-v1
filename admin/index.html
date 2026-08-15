@@ -155,27 +155,27 @@
         </div>
 
         <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))" id="dash-kpis">
-          <div class="kpi-card" data-vista="solicitudes" data-estado="pendiente" title="Ver solicitudes pendientes de hoy">
+          <div class="kpi-card amarillo" data-vista="solicitudes" data-estado="pendiente" title="Ver solicitudes pendientes de hoy">
             <div class="kpi-icono"><i data-lucide="clipboard-list"></i></div>
             <div><div class="kpi-label">Pendientes hoy</div><div class="kpi-numero" id="res-pendientes"><span class="skel skel-num" aria-hidden="true"></span></div><div class="kpi-sub" id="res-pendientes-trend"></div></div>
           </div>
-          <div class="kpi-card" data-vista="solicitudes" data-estado="entregada" title="Ver solicitudes entregadas hoy">
+          <div class="kpi-card verde" data-vista="solicitudes" data-estado="entregada" title="Ver solicitudes entregadas hoy">
             <div class="kpi-icono"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></div>
             <div><div class="kpi-label">Entregadas hoy</div><div class="kpi-numero" id="res-prestadas"><span class="skel skel-num" aria-hidden="true"></span></div><div class="kpi-sub" id="res-prestadas-trend"></div></div>
           </div>
-          <div class="kpi-card" data-vista="solicitudes" data-estado="retornada" title="Ver solicitudes retornadas hoy">
+          <div class="kpi-card verde" data-vista="solicitudes" data-estado="retornada" title="Ver solicitudes retornadas hoy">
             <div class="kpi-icono"><i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></div>
             <div><div class="kpi-label">Retornadas hoy</div><div class="kpi-numero" id="res-hoy"><span class="skel skel-num" aria-hidden="true"></span></div><div class="kpi-sub" id="res-hoy-trend"></div></div>
           </div>
-          <div class="kpi-card" data-vista="solicitudes" data-estado="entregada" title="Herramientas actualmente prestadas y sin retornar">
+          <div class="kpi-card gris" data-vista="solicitudes" data-estado="entregada" title="Herramientas actualmente prestadas y sin retornar">
             <div class="kpi-icono"><i data-lucide="toolbox"></i></div>
             <div><div class="kpi-label">Herramientas afuera</div><div class="kpi-numero" id="res-afuera"><span class="skel skel-num" aria-hidden="true"></span></div></div>
           </div>
-          <div class="kpi-card" data-vista="prestamos-prof" title="Ver profesores con préstamos activos">
+          <div class="kpi-card gris" data-vista="prestamos-prof" title="Ver profesores con préstamos activos">
             <div class="kpi-icono"><i data-lucide="graduation-cap"></i></div>
             <div><div class="kpi-label">Profesores c/préstamo</div><div class="kpi-numero" id="res-prof-activos"><span class="skel skel-num" aria-hidden="true"></span></div></div>
           </div>
-          <div class="kpi-card rojo" id="dash-kpi-incidencias" onclick="verIncidencias()" title="Ver incidencias abiertas">
+          <div class="kpi-card gris" id="dash-kpi-incidencias" onclick="verIncidencias()" title="Ver incidencias abiertas">
             <div class="kpi-icono"><i data-lucide="triangle-alert"></i></div>
             <div><div class="kpi-label">Incidencias abiertas</div><div class="kpi-numero" id="dash-incidencias"><span class="skel skel-num" aria-hidden="true"></span></div></div>
           </div>

@@ -913,6 +913,12 @@ async function _actualizarDashboard(todas, prestProf) {
     set("badge-pendientes", pendHoy);
     set("dash-incidencias",  incidencias + incidenciasProf);
     set("dash-prof-activos", profActivosHoy);
+    {
+      const totalIncAbiertas = incidencias + incidenciasProf;
+      const cardInc = document.getElementById("dash-kpi-incidencias");
+      if (cardInc) cardInc.classList.toggle("rojo", totalIncAbiertas > 0);
+      if (cardInc) cardInc.classList.toggle("gris", totalIncAbiertas === 0);
+    }
     set("res-total", deHoy.length);
     actualizarBadgeLateral("badge-incidencias", incidencias + incidenciasProf);
 

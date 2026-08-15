@@ -580,11 +580,17 @@ body:not(.tema-claro) .switch-tema-icono-luna { opacity: 1; }
 .kpi-card:hover .kpi-icono { transform: scale(1.06); }
 .kpi-card.amarillo .kpi-icono { background: rgba(234,179,8,0.1); }
 .kpi-card.rojo .kpi-icono { background: rgba(248,113,113,0.1); }
+.kpi-card.verde .kpi-icono { background: var(--verde-glow); }
+.kpi-card.gris .kpi-icono { background: rgba(139,148,158,0.14); color: var(--texto-dim); }
 
 .kpi-label { font-size: 9.5px; font-weight: 700; color: var(--texto-dim); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 2px; }
 .kpi-numero { font-size: 21px; font-weight: 700; line-height: 1; letter-spacing: -0.5px; color: var(--texto); }
 .kpi-card.amarillo .kpi-numero { color: var(--amarillo); }
 .kpi-card.rojo .kpi-numero { color: var(--rojo); }
+.kpi-card.verde .kpi-numero { color: var(--verde); }
+/* .gris no tiñe el número a propósito: es la variante "informativa neutra"
+   (Herramientas Afuera, Profesores c/préstamo, Incidencias en 0) — el número
+   se queda en el color de texto normal, sin urgencia visual. */
 .kpi-sub { font-size: 9.5px; color: var(--texto-dim); margin-top: 3px; }
 .kpi-top { margin-bottom: 1px; }
 
