@@ -1420,21 +1420,16 @@ body.tema-claro #vista-herramientas-cfg .her-grid {
   border-left-color: var(--rojo);
 }
 
-/* Chips de categoría: pill redondeada, más "física", con su color real */
+/* Chips de categoría: pill redondeada, más "física", con su color real.
+   Scroll oculto (sigue siendo desplazable) por la misma razón que la
+   regla genérica de arriba: una barra visible aquí descuadra la
+   alineación vertical con el buscador de al lado. */
 #vista-herramientas-cfg .her-categoria-chips {
   gap: 8px;
-  scrollbar-width: thin;
-  scrollbar-color: var(--borde) transparent;
+  scrollbar-width: none;
 }
 #vista-herramientas-cfg .her-categoria-chips::-webkit-scrollbar {
-  height: 5px;
-}
-#vista-herramientas-cfg .her-categoria-chips::-webkit-scrollbar-track {
-  background: transparent;
-}
-#vista-herramientas-cfg .her-categoria-chips::-webkit-scrollbar-thumb {
-  background: var(--borde);
-  border-radius: 10px;
+  display: none;
 }
 #vista-herramientas-cfg .her-chip {
   border-radius: 20px;
