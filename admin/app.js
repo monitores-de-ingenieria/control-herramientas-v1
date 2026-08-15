@@ -2329,6 +2329,45 @@ const CATEGORIAS_HERRAMIENTA = {
 // A partir de esta cantidad disponible (inclusive) se marca "stock bajo".
 const UMBRAL_STOCK_BAJO = 2;
 let herCategoriaActiva = "";
+// Los chips de categoría (#her-chips) solo se pueden desplazar por defecto
+// con Shift+rueda o las flechas del teclado (con foco), que no es intuitivo
+// para la mayoría. Esto agrega: (1) la rueda normal del mouse también mueve
+// los chips en horizontal, y (2) se puede arrastrar con clic, como una
+// galería. Se configura una sola vez -- el <div id="her-chips"> ya existe
+// en el HTML desde el inicio; solo su innerHTML se reemplaza en cada render,
+// así que no hace falta reconfigurar esto cada vez.
+(function configurarScrollChipsHerramientas() {
+  const el = document.getElementById("her-chips");
+  if (!el) return;
+
+  el.addEventListener("wheel", (e) => {
+    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return; // ya es scroll horizontal nativo (trackpad); no interferir
+    e.preventDefault();
+    el.scrollLeft += e.deltaY;
+  }, { passive: false });
+
+  let arrastrando = false, inicioX = 0, inicioScroll = 0, seMovio = false;
+  el.addEventListener("mousedown", (e) => {
+    arrastrando = true; seMovio = false;
+    el.classList.add("chips-arrastrando");
+    inicioX = e.pageX;
+    inicioScroll = el.scrollLeft;
+  });
+  window.addEventListener("mouseup", () => { arrastrando = false; el.classList.remove("chips-arrastrando"); });
+  window.addEventListener("mousemove", (e) => {
+    if (!arrastrando) return;
+    e.preventDefault();
+    const distancia = e.pageX - inicioX;
+    if (Math.abs(distancia) > 4) seMovio = true; // umbral para no confundir un clic normal con un arrastre
+    el.scrollLeft = inicioScroll - distancia;
+  });
+  // Si hubo arrastre real, se cancela el clic del chip para no seleccionar
+  // una categoría por accidente al soltar el mouse tras deslizar.
+  el.addEventListener("click", (e) => {
+    if (seMovio) { e.stopPropagation(); e.preventDefault(); }
+  }, true);
+})();
+
 window.limpiarFiltrosHerramientas = function() {
   const buscar = document.getElementById("her-buscar");
   if (buscar) buscar.value = "";
