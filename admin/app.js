@@ -2376,8 +2376,20 @@ let _chipsArrastroReciente = false;
       el.classList.add("chips-arrastrando");
       e.preventDefault();
       el.scrollLeft = inicioScroll - distancia;
+      actualizarDesvanecidoChips();
     }
   });
+
+  // El desvanecido del borde derecho solo se muestra si de verdad hay más
+  // categorías ocultas -- si no, tapaba el número de cantidad de la última.
+  function actualizarDesvanecidoChips() {
+    const quedaMas = el.scrollLeft + el.clientWidth < el.scrollWidth - 2;
+    el.classList.toggle("tiene-mas-a-la-derecha", quedaMas);
+  }
+  el.addEventListener("scroll", actualizarDesvanecidoChips);
+  window.addEventListener("resize", actualizarDesvanecidoChips);
+  new MutationObserver(actualizarDesvanecidoChips).observe(el, { childList: true });
+  actualizarDesvanecidoChips();
 })();
 
 window.limpiarFiltrosHerramientas = function() {

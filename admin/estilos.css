@@ -1428,9 +1428,8 @@ body.tema-claro #vista-herramientas-cfg .her-grid {
   gap: 8px;
   scrollbar-width: none;
   cursor: grab;
-  /* Sin barra de scroll visible, pero hace falta alguna señal de que hay
-     más categorías a la derecha -- un desvanecido en el borde derecho
-     cumple esa función sin ocupar espacio ni descuadrar la alineación. */
+}
+#vista-herramientas-cfg .her-categoria-chips.tiene-mas-a-la-derecha {
   mask-image: linear-gradient(to right, black calc(100% - 28px), transparent 100%);
   -webkit-mask-image: linear-gradient(to right, black calc(100% - 28px), transparent 100%);
 }
