@@ -2354,7 +2354,6 @@ let _chipsArrastroReciente = false;
   let arrastrando = false, inicioX = 0, inicioScroll = 0;
   el.addEventListener("mousedown", (e) => {
     arrastrando = true;
-    el.classList.add("chips-arrastrando");
     inicioX = e.pageX;
     inicioScroll = el.scrollLeft;
   });
@@ -2368,9 +2367,13 @@ let _chipsArrastroReciente = false;
     const distancia = e.pageX - inicioX;
     // Umbral generoso (8px) para no confundir un clic normal -- sobre todo
     // en trackpad, donde un clic simple casi siempre trae algo de movimiento
-    // -- con un arrastre real para desplazar los chips.
+    // -- con un arrastre real para desplazar los chips. La clase que apaga
+    // los clics de los chips (pointer-events:none) solo se agrega AQUÍ,
+    // una vez confirmado el arrastre -- nunca desde el mousedown, porque
+    // eso mataba también el clic normal antes de que llegara a registrarse.
     if (Math.abs(distancia) > 8) {
       _chipsArrastroReciente = true;
+      el.classList.add("chips-arrastrando");
       e.preventDefault();
       el.scrollLeft = inicioScroll - distancia;
     }
