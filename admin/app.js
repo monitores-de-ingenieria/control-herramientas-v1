@@ -837,10 +837,14 @@ window.dashIrCategoria = function(cat) {
 };
 
 window.dashAbrirHerramienta = function(nombre) {
+  const vistaOrigen = document.querySelector(".vista.activa")?.id.replace(/^vista-/, "") || "dashboard";
   navegarVista("herramientas-cfg");
   setTimeout(() => {
     const h = (_herListaActual || []).find(x => x.nombre === nombre);
-    if (h) abrirModalHerramienta(h.id, h.nombre, h.cantidadDisponible, h.local||false, h.categoria||"");
+    if (h) {
+      _volverAVistaTrasCerrarHerramienta = vistaOrigen;
+      abrirModalHerramienta(h.id, h.nombre, h.cantidadDisponible, h.local||false, h.categoria||"");
+    }
   }, 80);
 };
 
@@ -3218,6 +3222,14 @@ window.renderExtPickerGrid = function() {
 // que devolver el flujo al recibo del préstamo externo en vez de solo cerrar.
 let _volverAExtPickerTrasGuardarHerramienta = false;
 
+// Guarda a qué vista regresar al cerrar el modal de herramienta, para los
+// casos donde abrirlo implicó navegar de página primero (ej. desde el
+// Dashboard, que te lleva a Herramientas para poder abrir el modal ahí).
+// Sin esto, al cerrar el modal (con cualquier botón, o guardando) te
+// quedabas parado en la página a la que se navegó por debajo, en vez de
+// volver a donde estabas. Se lee y limpia en cerrarModalHerramienta().
+let _volverAVistaTrasCerrarHerramienta = null;
+
 window.abrirModalHerramientaDesdeExtPicker = function() {
   const nombreSugerido = document.getElementById("ext-picker-buscar").value.trim();
   _volverAExtPickerTrasGuardarHerramienta = true;
@@ -3824,6 +3836,10 @@ window.cerrarModalHerramienta = function() {
   herCfgEditar = null;
   herIconoLimpiarFlag = false;
   _volverAExtPickerTrasGuardarHerramienta = false;
+  if (_volverAVistaTrasCerrarHerramienta) {
+    navegarVista(_volverAVistaTrasCerrarHerramienta);
+    _volverAVistaTrasCerrarHerramienta = null;
+  }
 };
 
 window.herFotoError = function(img) {
