@@ -864,7 +864,17 @@ window.dashIrDia = function(fechaIso) {
 window.dashAbrirEvento = function(tipo, id) {
   if (!id) return;
   if (tipo === "solicitud") {
-    abrirModal(id); // flota sobre cualquier vista, no hace falta navegar primero
+    const s = todasSolicitudes.find(x => x.id === id);
+    // Si la solicitud es de hoy, se abre el modal con acciones (Entregar/Anular/
+    // Retornar) como siempre. Si es de un día anterior, se abre en modo
+    // solo-lectura (el mismo detalle que usa Historial) para no permitir
+    // procesarla como si fuera de hoy -- aunque siga "pendiente".
+    if (s && esMismodia(s.creadoEn)) {
+      abrirModal(id); // flota sobre cualquier vista, no hace falta navegar primero
+    } else {
+      navegarVista("historial");
+      cargarHistorial().then(() => abrirModalHist(id, "estudiante"));
+    }
     return;
   }
   if (tipo === "prestamoProf") {
@@ -5397,6 +5407,14 @@ function histActualizarFiltrosUI() {
 function histEstadoInfo(r) {
   if (r.tipo !== "estudiante" && r.estado === "activo")   return { cls: "pendiente", txt: "⏳ Sin retornar" };
   if (r.tipo !== "estudiante" && r.estado === "retornado") return { cls: "retornada", txt: '<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retornado' };
+  // Una solicitud de estudiante que sigue "pendiente" pero es de un día
+  // anterior ya no se puede entregar desde aquí (ver dashAbrirEvento) --
+  // se muestra como "No entregada" en vez de "Pendiente" para que quede
+  // claro que quedó sin resolver ese día. No se toca el campo real en
+  // Firestore, solo la etiqueta.
+  if (r.tipo === "estudiante" && r.estado === "pendiente" && !esMismodia(r.creadoEn)) {
+    return { cls: "cancelada", txt: "No entregada" };
+  }
   return { cls: r.estado || "", txt: r.estado || "—" };
 }
 
