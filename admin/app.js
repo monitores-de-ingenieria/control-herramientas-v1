@@ -857,6 +857,39 @@ window.dashIrDia = function(fechaIso) {
   }, 80);
 };
 
+// Clic en una fila de "Actividad reciente": abre el detalle de la
+// solicitud (mismo modal que la tabla de Solicitudes), o para préstamos a
+// profesores -- que no tienen un modal de detalle propio -- navega a su
+// lista y resalta la tarjeta un momento para ubicarla entre las demás.
+window.dashAbrirEvento = function(tipo, id) {
+  if (!id) return;
+  if (tipo === "solicitud") {
+    abrirModal(id); // flota sobre cualquier vista, no hace falta navegar primero
+    return;
+  }
+  if (tipo === "prestamoProf") {
+    // "Préstamos a Profesores" solo mantiene en memoria los de HOY + los que
+    // sigan activos de días anteriores (ver cargarPrestamosProf). Un
+    // préstamo viejo que ya fue retornado no vive ahí -- pero si está
+    // completo en Historial (que carga todo sin filtrar por fecha).
+    const visible = (todosPrestamosProfVisible || []).some(p => p.id === id);
+    if (visible) {
+      navegarVista("prestamos-prof");
+      setTimeout(() => {
+        const card = document.querySelector(`.pp-card[data-id="${id}"]`);
+        if (!card) return;
+        card.scrollIntoView({ behavior: "smooth", block: "center" });
+        card.style.transition = "background-color 1.6s ease";
+        card.style.backgroundColor = "var(--verde-glow)";
+        setTimeout(() => { card.style.backgroundColor = ""; }, 100);
+      }, 80);
+    } else {
+      navegarVista("historial");
+      cargarHistorial().then(() => abrirModalHist(id, "profesor"));
+    }
+  }
+};
+
 // Registro central de listeners onSnapshot activos. Antes ninguno se
 // guardaba, así que al cerrar sesión (o volver a iniciar) quedaban
 // escuchando colecciones de Firestore para siempre (fuga de memoria/lecturas
@@ -1080,17 +1113,17 @@ async function _actualizarDashboard(todas, prestProf) {
       const eventos = [];
       todas.forEach(s => {
         const nombre = escapeHtml(`${s.nombre||""} ${s.apellido||""}`.trim() || "Estudiante");
-        if (s.entregadoEn)  eventos.push({ ts: fechaDe(s.entregadoEn),  texto: `${nombre} recibió herramientas`, icono:'<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i>', color:"#3fb950" });
-        if (s.retornadoEn)  eventos.push({ ts: fechaDe(s.retornadoEn),  texto: `${nombre} retornó herramientas`, icono:'<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i>', color:"#388bfd" });
-        if (!s.entregadoEn && !s.retornadoEn && s.creadoEn) eventos.push({ ts: fechaDe(s.creadoEn), texto: `${nombre} hizo una solicitud`, icono:'<i data-lucide="clipboard-list" style="width:1em;height:1em;vertical-align:-2px"></i>', color:"#d29922" });
+        if (s.entregadoEn)  eventos.push({ ts: fechaDe(s.entregadoEn),  texto: `${nombre} recibió herramientas`, icono:'<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i>', color:"#3fb950", id:s.id, tipo:"solicitud" });
+        if (s.retornadoEn)  eventos.push({ ts: fechaDe(s.retornadoEn),  texto: `${nombre} retornó herramientas`, icono:'<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i>', color:"#388bfd", id:s.id, tipo:"solicitud" });
+        if (!s.entregadoEn && !s.retornadoEn && s.creadoEn) eventos.push({ ts: fechaDe(s.creadoEn), texto: `${nombre} hizo una solicitud`, icono:'<i data-lucide="clipboard-list" style="width:1em;height:1em;vertical-align:-2px"></i>', color:"#d29922", id:s.id, tipo:"solicitud" });
       });
       prestProf.forEach(p => {
-        if (p.retornadoEn) eventos.push({ ts: fechaDe(p.retornadoEn), texto: `${escapeHtml(p.profesor)||"Profesor"} retornó herramientas`, icono:'<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i>', color:"#388bfd" });
-        else if (p.creadoEn) eventos.push({ ts: fechaDe(p.creadoEn), texto: `${escapeHtml(p.profesor)||"Profesor"} tomó herramientas`, icono:'<i data-lucide="user-round" style="width:1em;height:1em;vertical-align:-2px"></i>‍<i data-lucide="school" style="width:1em;height:1em;vertical-align:-2px"></i>', color:"#a371f7" });
+        if (p.retornadoEn) eventos.push({ ts: fechaDe(p.retornadoEn), texto: `${escapeHtml(p.profesor)||"Profesor"} retornó herramientas`, icono:'<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i>', color:"#388bfd", id:p.id, tipo:"prestamoProf" });
+        else if (p.creadoEn) eventos.push({ ts: fechaDe(p.creadoEn), texto: `${escapeHtml(p.profesor)||"Profesor"} tomó herramientas`, icono:'<i data-lucide="user-round" style="width:1em;height:1em;vertical-align:-2px"></i>‍<i data-lucide="school" style="width:1em;height:1em;vertical-align:-2px"></i>', color:"#a371f7", id:p.id, tipo:"prestamoProf" });
       });
       eventos.sort((a,b) => b.ts - a.ts);
       actEl.innerHTML = eventos.length ? eventos.slice(0,6).map(e => `
-        <div class="dash-fila-premium" style="border-left-color:${e.color};cursor:default">
+        <div class="dash-fila-premium" style="border-left-color:${e.color};cursor:pointer" onclick="dashAbrirEvento('${e.tipo}','${e.id}')">
           <span style="display:flex;width:30px;height:30px;border-radius:50%;background:${e.color}22;color:${e.color};align-items:center;justify-content:center;font-size:14px;flex-shrink:0">${e.icono}</span>
           <span style="flex:1;font-size:12px;color:var(--texto)">${e.texto}</span>
           <span style="color:var(--texto-dim);white-space:nowrap;font-size:10.5px">${e.ts.toLocaleTimeString("es-DO",{hour:"2-digit",minute:"2-digit"})}</span>
@@ -2635,7 +2668,7 @@ function ppRenderTabla() {
           : `<button class="btn btn-azul" onclick="abrirRetornoProf('${p.id}')" title="Revisar y registrar el retorno de un préstamo anterior">Revisar y retornar</button>`)
       : `<span style="font-size:11px;color:var(--verde);font-weight:700"><i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Completado</span>`;
     return `
-      <div class="pp-card${p.tieneIncidencias ? ' con-incidencia' : ''}" style="border-left:3px solid ${color}">
+      <div class="pp-card${p.tieneIncidencias ? ' con-incidencia' : ''}" data-id="${p.id}" style="border-left:3px solid ${color}">
         <div class="pp-card-top">
           <div class="pp-avatar" style="background:${color}22;color:${color}">${ini}</div>
           <div style="min-width:0;flex:1">
@@ -3799,13 +3832,6 @@ window.abrirModalHerramienta = function(id = null, nombre = "", cantidad = 1, es
   herFotoUrlEsReal  = !!datosActuales?.fotoUrl;
   herFotoUrlActual  = datosActuales?.fotoUrl || (herCfgCodigoLocal ? '../img/herramientas/' + herCfgCodigoLocal + '.jpg' : '') || "";
   document.getElementById("her-modal-titulo").textContent = id ? "Editar herramienta" : "+ Agregar herramienta";
-  const NOMBRES_VISTA = { dashboard: "Dashboard", solicitudes: "Solicitudes", "prestamos-prof": "Préstamos a Profesores", prestadas: "Herramientas Prestadas", historial: "Historial", auditoria: "Auditoría" };
-  const btnCancelar = document.getElementById("her-btn-cancelar");
-  if (btnCancelar) {
-    btnCancelar.textContent = _volverAVistaTrasCerrarHerramienta
-      ? `← Volver a ${NOMBRES_VISTA[_volverAVistaTrasCerrarHerramienta] || _volverAVistaTrasCerrarHerramienta}`
-      : "Cancelar";
-  }
   const inputNombre = document.getElementById("her-input-nombre");
   inputNombre.value    = nombre;
   inputNombre.readOnly = false;
