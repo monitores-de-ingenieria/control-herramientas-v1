@@ -3799,6 +3799,13 @@ window.abrirModalHerramienta = function(id = null, nombre = "", cantidad = 1, es
   herFotoUrlEsReal  = !!datosActuales?.fotoUrl;
   herFotoUrlActual  = datosActuales?.fotoUrl || (herCfgCodigoLocal ? '../img/herramientas/' + herCfgCodigoLocal + '.jpg' : '') || "";
   document.getElementById("her-modal-titulo").textContent = id ? "Editar herramienta" : "+ Agregar herramienta";
+  const NOMBRES_VISTA = { dashboard: "Dashboard", solicitudes: "Solicitudes", "prestamos-prof": "Préstamos a Profesores", prestadas: "Herramientas Prestadas", historial: "Historial", auditoria: "Auditoría" };
+  const btnCancelar = document.getElementById("her-btn-cancelar");
+  if (btnCancelar) {
+    btnCancelar.textContent = _volverAVistaTrasCerrarHerramienta
+      ? `← Volver a ${NOMBRES_VISTA[_volverAVistaTrasCerrarHerramienta] || _volverAVistaTrasCerrarHerramienta}`
+      : "Cancelar";
+  }
   const inputNombre = document.getElementById("her-input-nombre");
   inputNombre.value    = nombre;
   inputNombre.readOnly = false;
