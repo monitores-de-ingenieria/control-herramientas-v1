@@ -1185,6 +1185,7 @@
         <div class="modal-acciones" style="margin-top:auto;padding-top:10px;flex-direction:column;gap:8px">
           <div style="display:flex;gap:6px">
             <button class="btn btn-outline" onclick="cerrarModalEntrega()" style="flex:1;justify-content:center;border-color:var(--texto-dim);color:var(--texto)">Cerrar</button>
+            <button class="btn btn-rojo" id="btn-anular-entrega" onclick="cerrarModalEntrega();anular(solicitudActivaId)" style="flex:1;justify-content:center;display:none" title="Anular esta solicitud"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Anular</button>
             <button class="btn btn-azul" id="btn-guardar-sin-entregar" onclick="guardarCambiosPendiente()" style="flex:1;justify-content:center;display:none" title="Guarda los cambios en la lista sin marcarla como entregada todavía"><i data-lucide=save style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Guardar cambios</button>
           </div>
           <button class="btn btn-verde" onclick="confirmarEntrega()" title="Confirmar la entrega de las herramientas al estudiante" style="width:100%;justify-content:center"><i data-lucide=check style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Confirmar Entrega</button>

@@ -1769,6 +1769,7 @@ window.entregar = async function(id) {
   document.getElementById("btn-toggle-entrega").textContent = "Desmarcar todas";
   document.getElementById("entrega-picker-buscar").value = "";
   document.getElementById("btn-guardar-sin-entregar").style.display = s.estado === "pendiente" ? "" : "none";
+  document.getElementById("btn-anular-entrega").style.display = s.estado === "pendiente" ? "" : "none";
   renderReciboEntrega();
   renderEntregaPickerGrid();
 
