@@ -1188,7 +1188,7 @@
             <button class="btn btn-rojo" id="btn-anular-entrega" onclick="cerrarModalEntrega();anular(solicitudActivaId)" style="flex:1;justify-content:center;display:none" title="Anular esta solicitud"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Anular</button>
             <button class="btn btn-azul" id="btn-guardar-sin-entregar" onclick="guardarCambiosPendiente()" style="flex:1;justify-content:center;display:none" title="Guarda los cambios en la lista sin marcarla como entregada todavía"><i data-lucide=save style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Guardar</button>
           </div>
-          <button class="btn btn-verde" onclick="confirmarEntrega()" title="Confirmar la entrega de las herramientas al estudiante" style="width:100%;justify-content:center"><i data-lucide=check style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Confirmar Entrega</button>
+          <button class="btn btn-verde" id="btn-confirmar-entrega" onclick="confirmarEntrega()" title="Confirmar la entrega de las herramientas al estudiante" style="width:100%;justify-content:center"><i data-lucide=check style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Confirmar Entrega</button>
         </div>
       </div>
     </div>
@@ -1223,7 +1223,7 @@
             <button class="btn btn-outline" onclick="cerrarModalRetornoConAviso()" style="flex:1;justify-content:center;border-color:var(--texto-dim);color:var(--texto)" title="Cerrar sin guardar cambios"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Cerrar</button>
             <button class="btn btn-outline" onclick="confirmarAdicionalesRetorno()" title="Registrar entrega de herramientas adicionales al estudiante" style="flex:1;justify-content:center;font-size:11px;color:var(--azul);border-color:var(--azul)"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Confirmar adicionales</button>
           </div>
-          <button class="btn btn-verde" onclick="confirmarRetorno()" title="Confirmar el retorno de las herramientas del estudiante" style="width:100%;justify-content:center;font-weight:800"><i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Confirmar Retorno</button>
+          <button class="btn btn-verde" id="btn-confirmar-retorno" onclick="confirmarRetorno()" title="Confirmar el retorno de las herramientas del estudiante" style="width:100%;justify-content:center;font-weight:800"><i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Confirmar Retorno</button>
         </div>
       </div>
     </div>

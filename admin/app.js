@@ -2120,6 +2120,9 @@ window.confirmarEntrega = async function() {
     return;
   }
 
+  const btnConfirmar = document.getElementById("btn-confirmar-entrega");
+  if (btnConfirmar.disabled) return; // evita doble clic/tap con conexión lenta
+  btnConfirmar.disabled = true; btnConfirmar.textContent = "Guardando...";
   try {
     await updateDoc(doc(db, "solicitudes", solicitudActivaId), {
       estado: "entregada",
@@ -2140,6 +2143,7 @@ window.confirmarEntrega = async function() {
     cerrarModalEntrega();
     mostrarToast('<i data-lucide="check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramientas entregadas correctamente');
   } catch(e) { console.error("Error al entregar:", e); mostrarToast("Error al entregar: " + e.message, "rojo"); }
+  finally { btnConfirmar.disabled = false; btnConfirmar.textContent = "Confirmar Entrega"; }
 };
 
 // ─── MODAL RETORNO ───
@@ -2342,6 +2346,9 @@ window.confirmarRetorno = async function() {
     }
   });
 
+  const btnConfirmar = document.getElementById("btn-confirmar-retorno");
+  if (btnConfirmar.disabled) return; // evita doble clic/tap con conexión lenta
+  btnConfirmar.disabled = true; btnConfirmar.textContent = "Guardando...";
   try {
     await updateDoc(doc(db, "solicitudes", solicitudActivaId), {
       estado: "retornada",
@@ -2378,6 +2385,7 @@ window.confirmarRetorno = async function() {
       mostrarToast('<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Todas las herramientas retornadas correctamente');
     }
   } catch(e) { mostrarToast("Error al registrar retorno", "rojo"); }
+  finally { btnConfirmar.disabled = false; btnConfirmar.textContent = "Confirmar Retorno"; }
 };
 
 // ── HERRAMIENTAS LISTA (para buscador de adicionales) ──
